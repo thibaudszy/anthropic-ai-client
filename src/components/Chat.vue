@@ -27,10 +27,11 @@ const chatStore = useChatStore();
 <style scoped>
 .chat-container {
     width: clamp(300px, 100%, 1500px);
-    margin: 0 auto;
-    padding: 20px;
+    margin: 0;
     text-align: center;
     padding: 3rem;
+    padding-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .prompt-input {

@@ -42,10 +42,16 @@ watch(
     padding: 1rem;
 }
 .code-block-container {
+    margin-block: 1rem;
     background-color: black;
     border-radius: 0.5rem;
+    overflow: auto;
+    max-height: 30rem;
+    position: relative;
     & .code-block-header {
         background-color: var(--coral);
+        position: sticky;
+        top: 0;
         color: black;
         display: flex;
         justify-content: space-between;

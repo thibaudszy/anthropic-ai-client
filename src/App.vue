@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Chat from "./components/Chat.vue";
 import PromptInput from "./components/PromptInput.vue";
+import SideBar from "@/components/Sidebar.vue";
 import { useChatStore } from "@/store/chat.ts";
 
 const chatStore = useChatStore();
@@ -8,6 +9,7 @@ const chatStore = useChatStore();
 
 <template>
     <div class="app-content">
+        <SideBar />
         <main class="main-content">
             <h1>Chat with Claude</h1>
             <Chat class="chat-container" />
@@ -35,8 +37,6 @@ const chatStore = useChatStore();
 .chat-container {
     flex-grow: 1;
     overflow: auto;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
 }
 
 .reset-chat-btn {

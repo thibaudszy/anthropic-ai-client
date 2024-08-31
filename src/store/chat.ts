@@ -1,11 +1,41 @@
-import type { ChatItem } from "@/components/chat.types";
+import {
+    type ChatItem,
+    type Chat,
+    type ChatHistoryItem,
+} from "@/components/chat.types";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useChatStore = defineStore("chat", () => {
-    const chat = ref<ChatItem[]>(
-        JSON.parse(localStorage.getItem("chat")) || [],
+    const chat = ref<Chat>(
+        JSON.parse(localStorage.getItem("chat")) || {
+            id: Date.now(),
+            chat: [],
+        },
     );
+
+    const chatHistory = ref<ChatHistoryItem[]>([
+        { title: "Discussing AI Trends", chatId: "chat001" },
+        { title: "Project Brainstorming", chatId: "chat002" },
+        { title: "Weekly Team Meeting", chatId: "chat003" },
+        { title: "Marketing Strategy", chatId: "chat004" },
+        { title: "Customer Support Inquiry", chatId: "chat005" },
+        { title: "Technical Troubleshooting", chatId: "chat006" },
+        { title: "Onboarding New Employees", chatId: "chat007" },
+        { title: "Product Feedback Session", chatId: "chat008" },
+        { title: "Budget Planning", chatId: "chat009" },
+        { title: "Design Review", chatId: "chat010" },
+        { title: "Quarterly Goals", chatId: "chat011" },
+        { title: "Sales Pitch Practice", chatId: "chat012" },
+        { title: "Partnership Discussions", chatId: "chat013" },
+        { title: "App Feature Requests", chatId: "chat014" },
+        { title: "Market Research Analysis", chatId: "chat015" },
+        { title: "Code Review Session", chatId: "chat016" },
+        { title: "User Experience Feedback", chatId: "chat017" },
+        { title: "AI Ethics Debate", chatId: "chat018" },
+        { title: "Development Roadmap", chatId: "chat019" },
+        { title: "Client Onboarding", chatId: "chat020" },
+    ]);
     const prompt = ref<string>("");
 
     const sendPrompt = async () => {
@@ -16,12 +46,12 @@ export const useChatStore = defineStore("chat", () => {
             return;
         }
 
-        chat.value.push({ role: "user", content: promptToSend });
+        chat.value.chat.push({ role: "user", content: promptToSend });
         const AssistantResponse: ChatItem = {
             role: "assistant",
             content: "",
         };
-        chat.value.push(AssistantResponse);
+        chat.value.chat.push(AssistantResponse);
         try {
             const response = await fetch("http://localhost:3000/chat", {
                 method: "POST",
@@ -46,7 +76,8 @@ export const useChatStore = defineStore("chat", () => {
 
                 if (value) {
                     const chunk = decoder.decode(value, { stream: true });
-                    chat.value[chat.value.length - 1].content += chunk;
+                    chat.value.chat[chat.value.chat.length - 1].content +=
+                        chunk;
                 }
             }
         } catch (error) {
@@ -56,7 +87,7 @@ export const useChatStore = defineStore("chat", () => {
         }
     };
     const resetChat = () => {
-        chat.value = [];
+        chat.value.chat = [];
     };
-    return { chat, prompt, sendPrompt, resetChat };
+    return { chat, prompt, chatHistory, sendPrompt, resetChat };
 });
