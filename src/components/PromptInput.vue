@@ -15,17 +15,16 @@ function submitFormOnCommandEnter(keyPressEvent: KeyboardEvent) {
         keyPressEvent.preventDefault();
         handleSubmit();
     }
-
-    function handleSubmit() {
-        chatStore.prompt = "";
-    }
+}
+function handleSubmit() {
+    chatStore.sendPrompt();
 }
 </script>
 
 <template>
     <form @keydown="submitFormOnCommandEnter">
         <textarea v-model="chatStore.prompt" :rows="textAreaRows"> </textarea>
-        <button type="submit">Send</button>
+        <button type="submit" @click.prevent="handleSubmit">Send</button>
     </form>
 </template>
 

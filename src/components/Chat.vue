@@ -1,74 +1,36 @@
 <template>
     <div class="chat-container">
-        <h1>Chat with Claude</h1>
-        <input
-            v-model="prompt"
-            @keyup.enter="sendPrompt"
-            placeholder="Type your message and press Enter"
-            class="prompt-input"
-        />
-        <button @click="sendPrompt" class="send-button">Send</button>
         <div class="response-container">
-            <p v-for="(line, index) in responseLines" :key="index">
-                {{ line }}
-            </p>
+            <div
+                v-for="(chatItem, index) in chatStore.chat"
+                :key="index"
+                class="chat-item"
+                :class="{
+                    assistant: chatItem.role === 'assistant',
+                    user: chatItem.role === 'user',
+                }"
+            >
+                <ChatItem :chatItem="chatItem"></ChatItem>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useChatStore } from "@/store/chat.ts";
+import ChatItem from "./ChatItem.vue";
 
-const prompt = ref("");
-const responseLines = ref<string[]>([]);
-
-const sendPrompt = async () => {
-    if (!prompt.value.trim()) {
-        return;
-    }
-
-    responseLines.value = []; // Clear previous responses
-
-    try {
-        const response = await fetch("http://localhost:3000/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ prompt: prompt.value }),
-        });
-
-        responseLines.push("");
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder("utf-8");
-        let done = false;
-
-        while (!done) {
-            const { value, done: doneReading } = await reader?.read();
-            console.log({ value, doneReading });
-            done = doneReading;
-
-            if (value) {
-                const chunk = decoder.decode(value, { stream: true });
-                responseLines.value[responseLines.value.length - 1] += chunk;
-                console.log({ rl: responseLines.value });
-            }
-        }
-        console.log("DONE");
-    } catch (error) {
-        responseLines.value.push("Error: Unable to fetch response");
-    } finally {
-        prompt.value = ""; // Clear the input after sending
-    }
-};
+const chatStore = useChatStore();
 </script>
 
 <style scoped>
 .chat-container {
-    max-width: 600px;
+    width: clamp(300px, 100%, 1500px);
     margin: 0 auto;
     padding: 20px;
     text-align: center;
+    padding: 3rem;
 }
 
 .prompt-input {
@@ -90,10 +52,23 @@ const sendPrompt = async () => {
     white-space: pre-wrap; /* Preserves whitespace for streaming text */
     border-top: 1px solid #ddd;
     padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 p {
     margin: 0;
     padding: 0;
+}
+
+.chat-item {
+    width: 80%;
+}
+.user {
+    background-color: var(--color-background-soft);
+    padding: 0.5rem 1rem;
+    text-align: right;
+    align-self: flex-end;
 }
 </style>
