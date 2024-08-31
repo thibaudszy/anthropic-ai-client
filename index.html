@@ -11,3 +11,18 @@
         <script type="module" src="/src/main.ts"></script>
     </body>
 </html>
+
+<script>
+    function copyCode(button) {
+        const codeElement = button
+            .closest(".code-block-container")
+            .querySelector("pre code");
+        const codeText = codeElement.innerText;
+        navigator.clipboard.writeText(codeText).then(() => {
+            button.innerText = "Copied!";
+            setTimeout(() => {
+                button.innerText = "Copy";
+            }, 2000);
+        });
+    }
+</script>

@@ -20,21 +20,42 @@ watch(
             .use(remarkRehype)
             .use(enhanceCodeBlocks)
             .use(rehypeStarryNight)
-            .use(rehypeStringify)
+            .use(rehypeStringify, {
+                allowDangerousCharacters: true,
+                allowDangerousHtml: true,
+            })
             .process(props.chatItem.content);
-        html.value = String(file);
+        const str = String(file);
+        console.log(str);
+        html.value = str;
     },
     { immediate: true },
 );
 </script>
 
 <template>
-    <div v-if="html" v-html="html"></div>
+    <div v-html="html"></div>
 </template>
 
 <style>
 .markdown-code-block {
     background-color: black;
     padding: 1rem;
+}
+.code-block-container {
+    background-color: black;
+    border-radius: 0.5rem;
+    & .code-block-header {
+        background-color: var(--coral);
+        color: black;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    & > * {
+        padding-inline: 1rem;
+        padding-block: 0.5rem;
+    }
 }
 </style>

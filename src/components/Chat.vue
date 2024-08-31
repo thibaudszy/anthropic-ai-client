@@ -45,11 +45,9 @@ const chatStore = useChatStore();
     font-size: 16px;
     cursor: pointer;
 }
-
 .response-container {
     margin-top: 20px;
     text-align: left;
-    white-space: pre-wrap; /* Preserves whitespace for streaming text */
     border-top: 1px solid #ddd;
     padding-top: 10px;
     display: flex;
@@ -65,12 +63,12 @@ p {
 .chat-item {
     width: 80%;
     border-radius: 1rem;
+    padding: 0.5rem 1rem;
 }
 .user {
     background-color: var(--color-background-soft);
-    padding: 0.5rem 1rem;
-    text-align: right;
     align-self: flex-end;
+    width: 50%;
 }
 .assistant {
     background-color: var(--color-background-light);
