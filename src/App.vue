@@ -11,17 +11,15 @@ const chatStore = useChatStore();
         <main class="main-content">
             <h1>Chat with Claude</h1>
             <Chat class="chat-container" />
-            <button class="reset-chat-btn" @click="chatStore.resetChat">
-                Reset
-            </button>
             <PromptInput class="prompt-input" />
         </main>
     </div>
+    <button class="reset-chat-btn" @click="chatStore.resetChat">Reset</button>
 </template>
 
 <style scoped>
 .app-content {
-    max-height: 100dvh;
+    height: 100dvh;
     width: 100%;
     display: flex;
     overflow: hidden;
@@ -32,6 +30,7 @@ const chatStore = useChatStore();
     align-items: center;
     position: relative;
     width: 100%;
+    height: 100%;
 }
 .chat-container {
     flex-grow: 1;
