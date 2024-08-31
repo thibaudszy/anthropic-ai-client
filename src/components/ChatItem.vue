@@ -3,7 +3,6 @@ import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
-import { computedAsync } from "@vueuse/core";
 import type { ChatItem } from "@/components/chat.types.ts";
 import { enhanceCodeBlocks } from "@/utils/md-code-block-plugin.ts";
 import rehypeStarryNight from "rehype-starry-night";
