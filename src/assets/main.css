@@ -1,4 +1,5 @@
 @import "./base.css";
+@import "./code-highlighting.css";
 
 #app {
     width: 100dvw;

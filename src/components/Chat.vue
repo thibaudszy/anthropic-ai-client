@@ -64,11 +64,15 @@ p {
 
 .chat-item {
     width: 80%;
+    border-radius: 1rem;
 }
 .user {
     background-color: var(--color-background-soft);
     padding: 0.5rem 1rem;
     text-align: right;
     align-self: flex-end;
+}
+.assistant {
+    background-color: var(--color-background-light);
 }
 </style>

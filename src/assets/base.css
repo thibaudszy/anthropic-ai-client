@@ -7,11 +7,13 @@
     --bittersweet: hsla(4, 79%, 63%, 1);
     --darkorange: hsla(4, 79%, 11%, 1);
     --night: hsla(330, 6%, 7%, 1);
+    --gray: hsla(330, 0%, 13%, 1);
 }
 
 /* semantic color variables for this project */
 :root {
     --color-background: var(--night);
+    --color-background-light: var(--gray);
     --color-background-soft: var(--darkorange);
 
     --color-border: var(--vt-c-divider-light-2);
@@ -68,4 +70,10 @@ body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+    cursor: pointer;
+    background-color: var(--bittersweet);
+    font-weight: bold;
 }

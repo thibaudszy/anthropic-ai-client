@@ -13,8 +13,10 @@
         "format": "prettier --write src/"
     },
     "dependencies": {
+        "@vueuse/core": "^11.0.3",
         "axios": "^1.7.5",
         "pinia": "^2.2.2",
+        "rehype-starry-night": "^2.1.0",
         "rehype-stringify": "^10.0.0",
         "remark-parse": "^11.0.0",
         "remark-rehype": "^11.1.0",
