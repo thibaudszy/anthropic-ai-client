@@ -43,5 +43,7 @@ textarea {
     max-width: 30rem;
     background-color: gray;
     color: antiquewhite;
+    padding-inline: 1rem;
+    padding-block: 0.5rem;
 }
 </style>
