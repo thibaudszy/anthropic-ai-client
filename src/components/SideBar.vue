@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { useChatStore } from "@/store/chat.ts";
+import { useRoute, useRouter } from "vue-router";
 
 const chatStore = useChatStore();
+
+const router = useRouter();
+const route = useRoute();
 </script>
 
 <template>
@@ -9,7 +13,14 @@ const chatStore = useChatStore();
         <h2>Chat history</h2>
         <ul>
             <li v-for="item in chatStore.chatHistory" :key="item.chatId">
-                <button>{{ item.title }}</button>
+                <RouterLink
+                    :to="{
+                        path: '/',
+                        query: { ...route.query, chatId: item.chatId },
+                    }"
+                >
+                    {{ item.title }}
+                </RouterLink>
             </li>
         </ul>
     </aside>

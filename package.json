@@ -21,7 +21,8 @@
         "remark-parse": "^11.0.0",
         "remark-rehype": "^11.1.0",
         "unified": "^11.0.5",
-        "vue": "^3.4.29"
+        "vue": "^3.4.29",
+        "vue-router": "^4.4.3"
     },
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.8.0",

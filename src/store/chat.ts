@@ -5,13 +5,22 @@ import {
 } from "@/components/chat.types";
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { useRoute } from "vue-router";
 
 export const useChatStore = defineStore("chat", () => {
+    const route = useRoute();
+
+    const routeChatId = route.query.chatId;
+    const chatId =
+        typeof routeChatId === "string" ? getChatStorageId(routeChatId) : null;
+
     const chat = ref<Chat>(
-        JSON.parse(localStorage.getItem("chat")) || {
-            id: Date.now(),
-            chat: [],
-        },
+        chatId
+            ? JSON.parse(localStorage.getItem(chatId))
+            : {
+                  id: Date.now().toString(),
+                  chat: [],
+              },
     );
 
     const chatHistory = ref<ChatHistoryItem[]>([
@@ -83,7 +92,10 @@ export const useChatStore = defineStore("chat", () => {
         } catch (error) {
             AssistantResponse.content = "Error: Unable to fetch response";
         } finally {
-            localStorage.setItem("chat", JSON.stringify(chat.value));
+            localStorage.setItem(
+                getChatStorageId(chat.value.id),
+                JSON.stringify(chat.value),
+            );
         }
     };
     const resetChat = () => {
@@ -91,3 +103,7 @@ export const useChatStore = defineStore("chat", () => {
     };
     return { chat, prompt, chatHistory, sendPrompt, resetChat };
 });
+
+function getChatStorageId(id: string) {
+    return `chat-${id}`;
+}

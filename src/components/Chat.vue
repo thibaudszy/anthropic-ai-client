@@ -1,8 +1,16 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import { useChatStore } from "@/store/chat.ts";
+import ChatItem from "./ChatItem.vue";
+
+const chatStore = useChatStore();
+</script>
+
 <template>
     <div class="chat-container">
         <div class="response-container">
             <div
-                v-for="(chatItem, index) in chatStore.chat"
+                v-for="(chatItem, index) in chatStore.chat.chat"
                 :key="index"
                 class="chat-item"
                 :class="{
@@ -15,14 +23,6 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from "vue";
-import { useChatStore } from "@/store/chat.ts";
-import ChatItem from "./ChatItem.vue";
-
-const chatStore = useChatStore();
-</script>
 
 <style scoped>
 .chat-container {

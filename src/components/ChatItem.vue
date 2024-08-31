@@ -23,7 +23,7 @@ watch(
                 allowDangerousCharacters: true,
                 allowDangerousHtml: true,
             })
-            .process(props.chatItem.content);
+            .process(props.chatItem.chat?.content || "");
         const str = String(file);
         console.log(str);
         html.value = str;
