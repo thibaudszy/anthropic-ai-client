@@ -12,8 +12,8 @@ const props = defineProps<Props>();
     <div class="chat-container">
         <div class="response-container">
             <div
-                v-for="(chatItem, index) in chatData.value.chat"
-                :key="index"
+                v-for="chatItem in chatData.value.chat"
+                :key="chatItem.id"
                 class="chat-item"
                 :class="{
                     assistant: chatItem.role === 'assistant',

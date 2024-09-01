@@ -17,7 +17,7 @@ const route = useRoute();
                     path: '/',
                 }"
             >
-                New Chat
+                New chat
             </router-link>
         </button>
         <ul>

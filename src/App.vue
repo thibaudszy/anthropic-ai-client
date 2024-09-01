@@ -2,8 +2,8 @@
 import SideBar from "@/components/Sidebar.vue";
 import { useChatStore } from "@/store/chat.ts";
 
-
 const chatStore = useChatStore();
+
 </script>
 
 <template>
