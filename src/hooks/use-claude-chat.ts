@@ -52,11 +52,10 @@ export function useClaudeChat() {
 
     const chatHistory = useLocalStorage<ChatHistoryItem[]>("chat-history", []);
     const updateChatHistory = (activeChat: Chat) => {
-        debugger;
         if (chatHistory.value.some(({ chatId }) => chatId === activeChat.id)) {
             return;
         }
-        chatHistory.value.push({
+        chatHistory.value.unshift({
             chatId: activeChat.id,
             title: activeChat.title,
         });
@@ -81,13 +80,12 @@ export function useClaudeChat() {
             messages: [
                 {
                     role: "user",
-                    content: `Generate a title for this conversation. The title should be maximum 6 words long. Your reply should only contain the title and nothing else. Conversation: ${JSON.stringify(chat.value?.chat)}`,
+                    content: `Generate a title for this conversation. The title should provide context on the conversation and allow to easily find it later. The title should be maximum 6 words long. Your reply should only contain the title and nothing else. Conversation: ${JSON.stringify(activeChat.value?.chat)}`,
                 },
             ],
-            model: "claude-3-opus-20240229",
+            model: "claude-3-5-sonnet-20240620",
         });
-        console.log("content", message.content);
-        historyItem.title = message.content;
+        historyItem.title = message.content[0].text;
     };
 
     const sendPrompt = async (prompt: string) => {
@@ -96,10 +94,10 @@ export function useClaudeChat() {
         }
 
         if (!route.query.chatid) {
+            updateChatHistory(activeChat.value);
             router.replace({
                 query: { ...route.query, chatid: activeChatId.value },
             });
-            updateChatHistory(activeChat.value);
         }
 
         activeChat.value.chat.push({
@@ -143,7 +141,7 @@ export function useClaudeChat() {
         }
     };
 
-    return { activeChat, sendPrompt };
+    return { activeChat, sendPrompt, chatHistory };
 }
 
 function getChatStorageId(id: number) {
