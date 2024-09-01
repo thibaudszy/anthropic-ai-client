@@ -9,6 +9,7 @@ import rehypeStarryNight from "rehype-starry-night";
 import { ref, watch } from "vue";
 
 const props = defineProps<{ chatItem: ChatItem }>();
+console.log({ chatItem: props.chatItem });
 const html = ref<string>();
 
 watch(

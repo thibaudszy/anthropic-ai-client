@@ -4,6 +4,7 @@ import PromptInput from "@/components/PromptInput.vue";
 import { useChatStore } from "@/store/chat.ts";
 
 const chatStore = useChatStore();
+
 </script>
 
 <template>
