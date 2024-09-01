@@ -5,33 +5,35 @@ import {
 } from "@/components/chat.types";
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useStorage } from "@vueuse/core";
+
+export const localStorageChatHistoryKey = "chat-history";
 
 export const useChatStore = defineStore("chat", () => {
     const route = useRoute();
+    const router = useRouter();
 
     const chatId = computed(() => {
         return route.query.chatid;
     });
 
     const chat = computed<Chat>(() => {
-        const defaultChat = {
-            id: Date.now().toString(),
-            chat: [],
-        };
-        if (!chatId.value) {
-            return defaultChat;
+        if (chatId.value) {
+            try {
+                return (
+                    JSON.parse(localStorage.getItem(chatId.value)) ||
+                    createChat()
+                );
+            } catch {}
         }
-        try {
-            return (
-                JSON.parse(localStorage.getItem(chatId.value)) || defaultChat
-            );
-        } catch {
-            return defaultChat;
-        }
+        return createChat();
     });
 
-    const chatHistory = ref<ChatHistoryItem[]>([]);
+    const chatHistory = useStorage<ChatHistoryItem[]>(
+        localStorageChatHistoryKey,
+        [],
+    );
     const prompt = ref<string>("");
 
     const sendPrompt = async () => {
@@ -90,7 +92,33 @@ export const useChatStore = defineStore("chat", () => {
     const resetChat = () => {
         chat.value.chat = [];
     };
-    return { chat, prompt, chatId, chatHistory, sendPrompt, resetChat };
+    const generateNewChatId = () => {
+        const newId = Date.now();
+        chatHistory.value = chatHistory.value.concat({
+            chatId: newId,
+            title: "New chat",
+        });
+
+        router.replace({ query: { ...route.query, chatid: newId } });
+        return newId;
+    };
+    const createChat = () => {
+        if (!chat.value?.chat) return;
+        return {
+            id: generateNewChatId(),
+            chat: [],
+        };
+    };
+
+    return {
+        chat,
+        prompt,
+        chatId,
+        chatHistory,
+        sendPrompt,
+        resetChat,
+        generateNewChatId,
+    };
 });
 
 function getChatStorageId(id: string) {

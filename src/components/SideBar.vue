@@ -11,12 +11,21 @@ const route = useRoute();
 <template>
     <aside>
         <h2>Chat history</h2>
+        <button>
+            <router-link
+                :to="{
+                    query: { path: '/' },
+                }"
+            >
+                New Chat
+            </router-link>
+        </button>
         <ul>
             <li v-for="item in chatStore.chatHistory" :key="item.chatId">
                 <RouterLink
                     :to="{
                         path: '/',
-                        query: { ...route.query, chatId: item.chatId },
+                        query: { ...route.query, chatid: item.chatId },
                     }"
                 >
                     {{ item.title }}

@@ -10,5 +10,5 @@ export interface Chat {
 
 export interface ChatHistoryItem {
     title: string;
-    chatId: string;
+    chatId: number;
 }
