@@ -8,6 +8,6 @@ import { router } from "./router/router.ts";
 const app = createApp(App);
 const pinia = createPinia();
 
-app.use(pinia);
 app.use(router);
+app.use(pinia);
 app.mount("#app");

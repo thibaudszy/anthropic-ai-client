@@ -8,12 +8,10 @@ import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 
 export const useChatStore = defineStore("chat", () => {
+    const route = useRoute();
+
     const chatId = computed(() => {
-        const route = useRoute();
-        const routeChatId = route.query.chatId;
-        return typeof routeChatId === "string"
-            ? getChatStorageId(routeChatId)
-            : null;
+        return route.query.chatid;
     });
 
     const chat = computed<Chat>(() => {
@@ -21,11 +19,13 @@ export const useChatStore = defineStore("chat", () => {
             id: Date.now().toString(),
             chat: [],
         };
-        if (!chatId) {
+        if (!chatId.value) {
             return defaultChat;
         }
         try {
-            return JSON.parse(localStorage.getItem(chatId)) || defaultChat;
+            return (
+                JSON.parse(localStorage.getItem(chatId.value)) || defaultChat
+            );
         } catch {
             return defaultChat;
         }
@@ -90,7 +90,7 @@ export const useChatStore = defineStore("chat", () => {
     const resetChat = () => {
         chat.value.chat = [];
     };
-    return { chat, prompt, chatHistory, sendPrompt, resetChat };
+    return { chat, prompt, chatId, chatHistory, sendPrompt, resetChat };
 });
 
 function getChatStorageId(id: string) {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
 import { useChatStore } from "@/store/chat.ts";
 import ChatItem from "./ChatItem.vue";
 

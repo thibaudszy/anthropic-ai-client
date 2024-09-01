@@ -24,7 +24,7 @@ watch(
                 allowDangerousCharacters: true,
                 allowDangerousHtml: true,
             })
-            .process(props.chatItem.chat?.content || "");
+            .process(props.chatItem.content || "");
         const str = String(file);
         console.log(str);
         html.value = str;
