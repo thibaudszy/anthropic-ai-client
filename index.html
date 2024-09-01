@@ -19,9 +19,9 @@
             .querySelector("pre code");
         const codeText = codeElement.innerText;
         navigator.clipboard.writeText(codeText).then(() => {
-            button.innerText = "Copied!";
+            button.classList.add("active");
             setTimeout(() => {
-                button.innerText = "Copy";
+                button.classList.remove("active");
             }, 2000);
         });
     }

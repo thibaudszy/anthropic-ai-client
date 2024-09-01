@@ -1,25 +1,27 @@
 <script setup lang="ts">
-import { useChatStore } from "@/store/chat.ts";
 import { useRoute, useRouter } from "vue-router";
-import { useClaudeChat } from "@/hooks/use-claude-chat.ts";
+import { useChatHistory } from "@/stores/chat-history.ts";
+import { storeToRefs } from "pinia";
 
 const router = useRouter();
 const route = useRoute();
 
-const claudeChat = useClaudeChat();
+const chatHistoryStore = useChatHistory();
+const { chatHistory } = storeToRefs(chatHistoryStore);
 </script>
 
 <template>
     <aside>
         <header>
             <h2>Chat history</h2>
-            <button class="new-chat icon">
-                <router-link
-                    title="New chat"
-                    :to="{
-                        path: '/',
-                    }"
-                >
+
+            <router-link
+                title="New chat"
+                :to="{
+                    path: '/',
+                }"
+            >
+                <button class="new-chat icon">
                     <svg
                         class="w-6 h-6 text-gray-800 dark:text-white"
                         aria-hidden="true"
@@ -37,11 +39,11 @@ const claudeChat = useClaudeChat();
                             d="M5 12h14m-7 7V5"
                         />
                     </svg>
-                </router-link>
-            </button>
+                </button>
+            </router-link>
         </header>
         <ul>
-            <li v-for="item in claudeChat.chatHistory.value" :key="item.chatId">
+            <li v-for="item in chatHistory" :key="item.chatId">
                 <RouterLink
                     :to="{
                         path: '/',
@@ -81,9 +83,14 @@ aside {
         & li {
             width: 100%;
             text-align: left;
-            padding-block: 0.5rem;
-            padding-inline: 1rem;
+
             border-bottom: 2px solid white;
+
+            & a {
+                display: block;
+                padding-block: 0.5rem;
+                padding-inline: 1rem;
+            }
 
             &:hover {
                 background-color: gray;

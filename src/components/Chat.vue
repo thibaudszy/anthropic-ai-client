@@ -51,8 +51,6 @@ const props = defineProps<Props>();
 .response-container {
     margin-top: 20px;
     text-align: left;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
     display: flex;
     flex-direction: column;
     gap: 1rem;

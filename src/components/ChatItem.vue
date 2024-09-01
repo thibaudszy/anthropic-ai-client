@@ -9,7 +9,6 @@ import rehypeStarryNight from "rehype-starry-night";
 import { ref, watch } from "vue";
 
 const props = defineProps<{ chatItem: ChatItem }>();
-console.log({ chatItem: props.chatItem });
 const html = ref<string>();
 
 watch(
@@ -57,6 +56,22 @@ watch(
         justify-content: space-between;
         margin-bottom: 0.5rem;
         border-radius: 0.5rem 0.5rem 0 0;
+        & .copy-button {
+            & .copy {
+                display: visible;
+            }
+            & .check {
+                display: none;
+            }
+        }
+        & .copy-button.active {
+            & .copy {
+                display: none;
+            }
+            & .check {
+                display: block;
+            }
+        }
     }
     & > * {
         padding-inline: 1rem;

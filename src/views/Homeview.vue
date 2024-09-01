@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import Chat from "@/components/Chat.vue";
 import PromptInput from "@/components/PromptInput.vue";
-import { useChatStore } from "@/store/chat.ts";
 import { useClaudeChat } from "@/hooks/use-claude-chat.ts";
 
-const chatStore = useChatStore();
 const claudeChat = useClaudeChat();
 
 function onPrompt(prompt: string) {
@@ -13,7 +11,9 @@ function onPrompt(prompt: string) {
 </script>
 
 <template>
-    <h1>Chat with Claude</h1>
+    <header>
+        <h1>Chat with Claude</h1>
+    </header>
     <Chat class="chat-container" :chat-data="claudeChat.activeChat" />
     <PromptInput class="prompt-input" @send-prompt="onPrompt" />
 </template>
@@ -22,6 +22,13 @@ function onPrompt(prompt: string) {
 .chat-container {
     flex-grow: 1;
     overflow: auto;
+}
+header {
+    width: 100%;
+    text-align: center;
+    box-shadow:
+        0 4px 6px -1px rgba(255, 255, 255, 0.1),
+        0 2px 4px -1px rgba(255, 255, 255, 0.06);
 }
 
 .reset-chat-btn {

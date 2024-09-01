@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useChatStore } from "../store/chat.ts";
 import { computed, ref } from "vue";
 
 type Emits = {

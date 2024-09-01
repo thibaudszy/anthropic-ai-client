@@ -5,10 +5,10 @@
     --coral: hsla(19, 97%, 64%, 1);
     --celestial-blue: hsla(206, 88%, 55%, 1);
     --bittersweet: hsla(4, 79%, 63%, 1);
-    --bittersweet-dark: #ff4757;
-    --darkorange: hsla(4, 79%, 11%, 1);
+    --bittersweet-dark: hsla(4, 79%, 60%, 1);
+    --darkorange: hsla(4, 79%, 60%, 1);
     --night: hsla(330, 6%, 7%, 1);
-    --gray: hsla(330, 0%, 13%, 1);
+    --gray: hsla(330, 0%, 25%, 1);
 }
 
 /* semantic color variables for this project */
@@ -18,7 +18,6 @@
     --color-background-soft: var(--darkorange);
 
     --color-border: var(--vt-c-divider-light-2);
-    --color-border-hover: var(--vt-c-divider-light-1);
 
     --color-heading: var(--celestial-blue);
     --color-text: var(--ghost-white);

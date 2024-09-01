@@ -1,13 +1,13 @@
-import { useLocalStorage } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import type {
     Chat,
-    ChatHistoryItem,
     ChatItem,
 } from "../components/chat.types.ts";
 import Anthropic from "@anthropic-ai/sdk";
 import { debounce } from "lodash-es";
+import { useChatHistory } from "@/stores/chat-history.ts";
+import { storeToRefs } from "pinia";
 
 const debouncedSaveToLocalStorage = debounce((key: string, data: string) => {
     debugger;
@@ -27,45 +27,42 @@ export function useClaudeChat() {
         return newId;
     });
 
-    const defaultChatValue = {
+    const getDefaultChatValue = () => ({
         id: activeChatId.value,
         title: "New chat",
         chat: [],
-    };
-    const activeChat = ref<Chat>(defaultChatValue);
-
-    watch(activeChatId, (newValue) => {
-        try {
-            const storedValue = localStorage.getItem(newValue);
-            if (storedValue) {
-                activeChat.value = JSON.parse(storedValue);
-                return;
-            }
-        } catch {}
-        activeChat.value = defaultChatValue;
     });
+    const activeChat = ref<Chat>(getDefaultChatValue());
+
+    watch(
+        activeChatId,
+        (newValue) => {
+            try {
+                const storedValue = localStorage.getItem(newValue);
+                if (storedValue) {
+                    activeChat.value = JSON.parse(storedValue);
+                    return;
+                }
+            } catch {}
+            activeChat.value = getDefaultChatValue();
+        },
+        { immediate: true },
+    );
 
     const anthropic = new Anthropic({
         apiKey: import.meta.env.VITE_API_KEY,
         dangerouslyAllowBrowser: true,
     });
 
-    const chatHistory = useLocalStorage<ChatHistoryItem[]>("chat-history", []);
-    const updateChatHistory = (activeChat: Chat) => {
-        if (chatHistory.value.some(({ chatId }) => chatId === activeChat.id)) {
-            return;
-        }
-        chatHistory.value.unshift({
-            chatId: activeChat.id,
-            title: activeChat.title,
-        });
-    };
+    const chatHistoryStore = useChatHistory();
+    const { chatHistory } = storeToRefs(chatHistoryStore);
 
     const generateTitleForChat = async () => {
         debugger;
-        const historyItem = chatHistory.value.find(
+        const historyItemIndex = chatHistory.value.findIndex(
             (el) => el.chatId === activeChatId.value,
         );
+        const historyItem = chatHistory.value[historyItemIndex];
         if (!historyItem) {
             console.error(
                 "something went wrong. There should be an history item",
@@ -92,9 +89,10 @@ export function useClaudeChat() {
         if (!prompt.trim()) {
             return;
         }
+        debugger;
 
         if (!route.query.chatid) {
-            updateChatHistory(activeChat.value);
+            chatHistoryStore.updateChatHistory(activeChat.value);
             router.replace({
                 query: { ...route.query, chatid: activeChatId.value },
             });
@@ -124,7 +122,6 @@ export function useClaudeChat() {
                     max_tokens: 1024,
                 })
                 .on("text", (text: string) => {
-                    console.log("LOG:", text);
                     activeChat.value.chat[
                         activeChat.value.chat.length - 1
                     ].content += text;
