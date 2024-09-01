@@ -8,7 +8,7 @@ const chatStore = useChatStore();
 
 <template>
     <div class="chat-container">
-        <div class="response-container">
+        <div v-if="chatStore.chat?.chat" class="response-container">
             <div
                 v-for="(chatItem, index) in chatStore.chat.chat"
                 :key="index"

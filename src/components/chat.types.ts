@@ -4,7 +4,7 @@ export interface ChatItem {
 }
 
 export interface Chat {
-    id: string;
+    id: number;
     chat: ChatItem[];
 }
 

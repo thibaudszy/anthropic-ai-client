@@ -15,20 +15,28 @@ export const useChatStore = defineStore("chat", () => {
     const router = useRouter();
 
     const chatId = computed(() => {
-        return route.query.chatid;
+        const { chatid } = route.query;
+        if (typeof chatid === "number") return chatid;
+        if (typeof chatid === "string" && !Number.isNaN(parseInt(chatid))) {
+            return parseInt(chatid);
+        }
+        return null;
     });
 
-    const chat = computed<Chat>(() => {
-        if (chatId.value) {
+    const initChat = () => {
+        const id = chatId.value;
+        if (id != null) {
             try {
-                return (
-                    JSON.parse(localStorage.getItem(chatId.value)) ||
-                    createChat()
-                );
+                const storageValue = localStorage.getItem(id.toString());
+                if (storageValue) {
+                    return JSON.parse(storageValue);
+                }
             } catch {}
         }
-        return createChat();
-    });
+        return null;
+    };
+
+    const chat = ref<Chat | null>(initChat());
 
     const chatHistory = useStorage<ChatHistoryItem[]>(
         localStorageChatHistoryKey,
@@ -42,6 +50,10 @@ export const useChatStore = defineStore("chat", () => {
 
         if (!promptToSend.trim()) {
             return;
+        }
+
+        if (!chat.value?.chat) {
+            chat.value = createChat();
         }
 
         chat.value.chat.push({ role: "user", content: promptToSend });
@@ -81,17 +93,14 @@ export const useChatStore = defineStore("chat", () => {
             }
         } catch (error) {
             AssistantResponse.content = "Error: Unable to fetch response";
-            console.log(error);
         } finally {
             localStorage.setItem(
-                getChatStorageId(chat.value.id),
+                getChatStorageId(chat.value.id.toString()),
                 JSON.stringify(chat.value),
             );
         }
     };
-    const resetChat = () => {
-        chat.value.chat = [];
-    };
+
     const generateNewChatId = () => {
         const newId = Date.now();
         chatHistory.value = chatHistory.value.concat({
@@ -102,11 +111,10 @@ export const useChatStore = defineStore("chat", () => {
         router.replace({ query: { ...route.query, chatid: newId } });
         return newId;
     };
-    const createChat = () => {
-        if (!chat.value?.chat) return;
+    const createChat: () => Chat = () => {
         return {
             id: generateNewChatId(),
-            chat: [],
+            chat: new Array<ChatItem>(),
         };
     };
 
@@ -116,7 +124,6 @@ export const useChatStore = defineStore("chat", () => {
         chatId,
         chatHistory,
         sendPrompt,
-        resetChat,
         generateNewChatId,
     };
 });
