@@ -8,7 +8,6 @@ export const useChatHistory = defineStore("chat-history", () => {
         localStorageChatHistoryKey,
         [],
     );
-    console.log({ chatHistory: chatHistory.value });
     const updateChatHistory = (activeChat: Chat) => {
         if (chatHistory.value.some(({ chatId }) => chatId === activeChat.id)) {
             return;

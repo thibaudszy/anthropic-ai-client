@@ -10,7 +10,6 @@ import { useChatHistory } from "@/stores/chat-history.ts";
 import { storeToRefs } from "pinia";
 
 const debouncedSaveToLocalStorage = debounce((key: string, data: string) => {
-    debugger;
     localStorage.setItem(key, data);
 }, 500);
 
@@ -58,7 +57,6 @@ export function useClaudeChat() {
     const { chatHistory } = storeToRefs(chatHistoryStore);
 
     const generateTitleForChat = async () => {
-        debugger;
         const historyItemIndex = chatHistory.value.findIndex(
             (el) => el.chatId === activeChatId.value,
         );
@@ -89,7 +87,6 @@ export function useClaudeChat() {
         if (!prompt.trim()) {
             return;
         }
-        debugger;
 
         if (!route.query.chatid) {
             chatHistoryStore.updateChatHistory(activeChat.value);
