@@ -14,7 +14,7 @@ const route = useRoute();
         <button>
             <router-link
                 :to="{
-                    query: { path: '/' },
+                    path: '/',
                 }"
             >
                 New Chat
