@@ -4,7 +4,6 @@ import type { Chat, ChatItem } from "../components/chat.types";
 import Anthropic from "@anthropic-ai/sdk";
 import { useChatHistory } from "@/stores/chat-history";
 import { storeToRefs } from "pinia";
-import { mdToHtml } from "@/utils/md-to-html";
 import { debounce } from "lodash-es";
 
 const debouncedSaveToLocalStorage = debounce((key: string, data: string) => {
@@ -84,7 +83,8 @@ export function useClaudeChat() {
     };
 
     const updateHtmlContent = async (mdContent: string, chatItem: ChatItem) => {
-        debugger;
+        const { mdToHtml } = await import("@/utils/md-to-html");
+
         chatItem.htmlContent = await mdToHtml(mdContent);
         debouncedSaveToLocalStorage(
             activeChatId.value,
