@@ -2,11 +2,27 @@
 import Chat from "@/components/Chat.vue";
 import PromptInput from "@/components/PromptInput.vue";
 import { useClaudeChat } from "@/hooks/use-claude-chat";
+import { ref } from "vue";
 
 const claudeChat = useClaudeChat();
 
 function onPrompt(prompt: string) {
     claudeChat.sendPrompt(prompt);
+}
+const showApiKeyRequest = ref(false);
+if (!localStorage.getItem("anthropic_api_key")) {
+    showApiKeyRequest.value = true;
+}
+
+const apiKeyInput = ref<string>("");
+
+function handleApiKeySubmit() {
+    if (!apiKeyInput.value.trim()) {
+        return;
+    }
+    localStorage.setItem("anthropic_api_key", apiKeyInput.value);
+    apiKeyInput.value = "";
+    showApiKeyRequest.value = false;
 }
 </script>
 
@@ -14,8 +30,21 @@ function onPrompt(prompt: string) {
     <header>
         <h1>Claude 3.5 Sonnet</h1>
     </header>
-    <Chat class="chat-container" :chat-data="claudeChat.activeChat" />
-    <PromptInput class="prompt-input" @send-prompt="onPrompt" />
+    <form
+        v-if="showApiKeyRequest"
+        class="api-key-form"
+        @submit.prevent="handleApiKeySubmit"
+    >
+        <label>Input the Anthropic API key here </label>
+        <div>
+            <input v-model="apiKeyInput" />
+            <button>submit</button>
+        </div>
+    </form>
+    <template v-else>
+        <Chat class="chat-container" :chat-data="claudeChat.activeChat" />
+        <PromptInput class="prompt-input" @send-prompt="onPrompt" />
+    </template>
 </template>
 
 <style scoped>
@@ -41,5 +70,17 @@ header {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
+}
+
+.api-key-form {
+    padding: 20rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5 rem;
+    & input {
+        width: 20rem;
+        margin-right: 10px;
+        padding: 0.5rem;
+    }
 }
 </style>

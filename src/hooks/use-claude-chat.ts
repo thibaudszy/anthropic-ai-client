@@ -46,8 +46,9 @@ export function useClaudeChat() {
         { immediate: true },
     );
 
+    const apiKey = localStorage.getItem("anthropic_api_key");
     const anthropic = new Anthropic({
-        apiKey: import.meta.env.VITE_API_KEY,
+        apiKey,
         dangerouslyAllowBrowser: true,
     });
 
