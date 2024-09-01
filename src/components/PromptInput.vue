@@ -7,9 +7,10 @@ type Emits = {
 };
 const emit = defineEmits<Emits>();
 
-const chatStore = useChatStore();
+const promptInitialValue = "";
+const prompt = ref<string>(promptInitialValue);
 const textAreaRows = computed(() => {
-    return Math.min(chatStore.prompt.split("\n").length, 10);
+    return Math.min(prompt.value.split("\n").length, 10);
 });
 
 function submitFormOnCommandEnter(keyPressEvent: KeyboardEvent) {
@@ -21,8 +22,7 @@ function submitFormOnCommandEnter(keyPressEvent: KeyboardEvent) {
         handleSubmit();
     }
 }
-const promptInitialValue = "";
-const prompt = ref<string>(promptInitialValue);
+
 function handleSubmit() {
     emit("send-prompt", prompt.value);
     prompt.value = promptInitialValue;

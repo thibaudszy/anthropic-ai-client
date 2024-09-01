@@ -5,6 +5,7 @@
     --coral: hsla(19, 97%, 64%, 1);
     --celestial-blue: hsla(206, 88%, 55%, 1);
     --bittersweet: hsla(4, 79%, 63%, 1);
+    --bittersweet-dark: #ff4757;
     --darkorange: hsla(4, 79%, 11%, 1);
     --night: hsla(330, 6%, 7%, 1);
     --gray: hsla(330, 0%, 13%, 1);
@@ -43,6 +44,7 @@
     box-sizing: border-box;
     margin: 0;
     font-weight: normal;
+    scrollbar-color: var(--ghost-white) var(--night);
 }
 
 body {
@@ -76,4 +78,40 @@ button {
     cursor: pointer;
     background-color: var(--bittersweet);
     font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    --icon-btn-diameter: 30px;
+    max-height: var(--icon-btn-diameter);
+    max-width: var(--icon-btn-diameter);
+    min-width: var(--icon-btn-diameter);
+    min-height: var(--icon-btn-diameter);
+    border-radius: 50%;
+    padding: 0;
+}
+
+button:hover {
+    background-color: var(--bittersweet-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+a {
+    color: unset;
+    text-decoration: unset;
 }
