@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import ChatItem from "./ChatItem.vue";
 import type { Chat } from "@/components/chat.types.ts";
+import type { Ref } from "vue";
 
 type Props = {
-    chatData: Chat;
+    chatData: Ref<Chat>;
 };
 const props = defineProps<Props>();
 </script>

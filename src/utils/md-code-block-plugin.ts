@@ -2,13 +2,15 @@ import { visit } from "unist-util-visit";
 import { h } from "hastscript";
 
 export function enhanceCodeBlocks() {
-    return (tree) => {
-        visit(tree, "element", (node, index, parent) => {
+    return (tree: any) => {
+        // @ts-expect-error
+        visit(tree, "element", (node, index: number, parent) => {
             if (node.tagName === "pre" && node.children[0].tagName === "code") {
                 // Get the language from the className of the code element
                 const className = node.children[0].properties.className || [];
                 const language =
-                    className.find((cls) => cls.startsWith("language-")) || "";
+                    className.find((cls: any) => cls.startsWith("language-")) ||
+                    "";
                 const languageName =
                     language.replace("language-", "") || "Unknown";
 

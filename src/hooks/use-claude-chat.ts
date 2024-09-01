@@ -1,9 +1,6 @@
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import type {
-    Chat,
-    ChatItem,
-} from "../components/chat.types.ts";
+import type { Chat, ChatItem } from "../components/chat.types.ts";
 import Anthropic from "@anthropic-ai/sdk";
 import { debounce } from "lodash-es";
 import { useChatHistory } from "@/stores/chat-history.ts";
@@ -80,6 +77,7 @@ export function useClaudeChat() {
             ],
             model: "claude-3-5-sonnet-20240620",
         });
+        // @ts-expect-error -- text is part of the content
         historyItem.title = message.content[0].text;
     };
 

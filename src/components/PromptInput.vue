@@ -3,8 +3,9 @@ import { computed, ref } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 
 type Emits = {
-    "send-prompt": string;
+    (e: "send-prompt", value: string): void;
 };
+
 const emit = defineEmits<Emits>();
 const { textarea, input } = useTextareaAutosize();
 
@@ -21,7 +22,7 @@ function submitFormOnCommandEnter(keyPressEvent: KeyboardEvent) {
 }
 
 function handleSubmit() {
-    emit("send-prompt", input.value);
+    emit("send-prompt", input.value as string);
     input.value = promptInitialValue;
 }
 </script>
