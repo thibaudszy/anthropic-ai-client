@@ -66,9 +66,6 @@ header {
     padding-top: 0.5rem;
 }
 aside {
-    --sidebar-width: 15rem;
-    min-width: var(--sidebar-width);
-    max-width: var(--sidebar-width);
     overflow: auto;
     border-right: 2px solid var(--ghost-white);
 

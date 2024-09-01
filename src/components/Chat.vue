@@ -28,12 +28,21 @@ const props = defineProps<Props>();
 
 <style scoped>
 .chat-container {
-    width: clamp(300px, 100%, 1500px);
     margin: 0;
     text-align: center;
     padding: 3rem;
     padding-top: 1rem;
     margin-bottom: 1rem;
+    max-width: 100%;
+}
+
+.response-container {
+    margin-top: 20px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 100%;
 }
 
 .prompt-input {
@@ -48,13 +57,6 @@ const props = defineProps<Props>();
     font-size: 16px;
     cursor: pointer;
 }
-.response-container {
-    margin-top: 20px;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
 
 p {
     margin: 0;
@@ -62,7 +64,7 @@ p {
 }
 
 .chat-item {
-    width: 80%;
+    max-width: 80%;
     border-radius: 1rem;
     padding: 0.5rem 1rem;
 }
@@ -73,5 +75,6 @@ p {
 }
 .assistant {
     background-color: var(--color-background-light);
+    max-width: 80%;
 }
 </style>
