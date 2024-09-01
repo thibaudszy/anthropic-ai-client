@@ -18,9 +18,11 @@ import SideBar from "@/components/Sidebar.vue";
     display: flex;
     overflow: hidden;
     --sidebar-width: 15rem;
+    flex-shrink: 0;
 
     & .app-sidebar {
         width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
     }
 
     & .main-content {
@@ -29,7 +31,13 @@ import SideBar from "@/components/Sidebar.vue";
         align-items: center;
         position: relative;
         height: 100%;
-        width: calc(100dvw - var(--sidebar-width));
+        flex-grow: 1;
+        --main-content-width: calc(100dvw - var(--sidebar-width)) width:
+            clamp(
+                var(--main-content-width),
+                var(--main-content-width),
+                var(--main-content-width)
+            );
     }
 }
 </style>

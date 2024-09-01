@@ -33,7 +33,7 @@ const props = defineProps<Props>();
     padding: 3rem;
     padding-top: 1rem;
     margin-bottom: 1rem;
-    max-width: 100%;
+    width: 100%;
 }
 
 .response-container {
@@ -42,7 +42,7 @@ const props = defineProps<Props>();
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-width: 100%;
+    width: 100%;
 }
 
 .prompt-input {

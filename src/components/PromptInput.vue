@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useTextareaAutosize } from "@vueuse/core";
 
 type Emits = {
     "send-prompt": string;
 };
 const emit = defineEmits<Emits>();
+const { textarea, input } = useTextareaAutosize();
 
 const promptInitialValue = "";
-const prompt = ref<string>(promptInitialValue);
-const textAreaRows = computed(() => {
-    return Math.min(prompt.value.split("\n").length, 10);
-});
 
 function submitFormOnCommandEnter(keyPressEvent: KeyboardEvent) {
     if (
@@ -23,34 +21,55 @@ function submitFormOnCommandEnter(keyPressEvent: KeyboardEvent) {
 }
 
 function handleSubmit() {
-    emit("send-prompt", prompt.value);
-    prompt.value = promptInitialValue;
+    emit("send-prompt", input.value);
+    input.value = promptInitialValue;
 }
 </script>
 
 <template>
     <form @keydown="submitFormOnCommandEnter">
-        <textarea v-model="prompt" :rows="textAreaRows"> </textarea>
+        <textarea
+            ref="textarea"
+            class="resize-none"
+            v-model="input"
+            placeholder="Proomt goes here"
+        >
+        </textarea>
         <button type="submit" @click.prevent="handleSubmit">Send</button>
     </form>
 </template>
 
 <style scoped>
 form {
-    width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
     padding-bottom: 5px;
     column-gap: 10px;
+    background-color: hsl(0deg 0% 18.43%);
+    padding: 0.5rem 1rem;
+    width: max-content;
+    margin-bottom: 10px;
+    border-radius: 1rem;
+
+    & button[type="submit"] {
+        align-self: flex-end;
+    }
 }
+
 textarea {
     resize: none;
-    min-width: 10rem;
-    width: 100%;
-    max-width: 30rem;
-    background-color: gray;
-    color: antiquewhite;
-    padding-inline: 1rem;
+    width: clamp(10rem, 40dvw, 40rem);
+    color: var(--ghost-white);
     padding-block: 0.5rem;
+    background-color: transparent;
+    border: none;
+    max-height: 20dvh;
+    scrollbar-color: var(--ghost-white) hsl(0deg 0% 18.43%);
+    &:focus {
+        outline: none;
+        box-shadow: none;
+        border-color: inherit;
+    }
 }
 </style>
