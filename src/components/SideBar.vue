@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from "vue-router";
-import { useChatHistory } from "@/stores/chat-history.ts";
+import { useRoute } from "vue-router";
+import { useChatHistory } from "@/stores/chat-history";
 import { storeToRefs } from "pinia";
 
-const router = useRouter();
 const route = useRoute();
 
 const chatHistoryStore = useChatHistory();

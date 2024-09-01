@@ -1,10 +1,11 @@
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import type { Chat, ChatItem } from "../components/chat.types.ts";
+import type { Chat, ChatItem } from "../components/chat.types";
 import Anthropic from "@anthropic-ai/sdk";
-import { debounce } from "lodash-es";
-import { useChatHistory } from "@/stores/chat-history.ts";
+import { useChatHistory } from "@/stores/chat-history";
 import { storeToRefs } from "pinia";
+import { mdToHtml } from "@/utils/md-to-html";
+import { debounce } from "lodash-es";
 
 const debouncedSaveToLocalStorage = debounce((key: string, data: string) => {
     localStorage.setItem(key, data);
@@ -81,6 +82,15 @@ export function useClaudeChat() {
         historyItem.title = message.content[0].text;
     };
 
+    const updateHtmlContent = async (mdContent: string, chatItem: ChatItem) => {
+        debugger;
+        chatItem.htmlContent = await mdToHtml(mdContent);
+        debouncedSaveToLocalStorage(
+            activeChatId.value,
+            JSON.stringify(activeChat.value),
+        );
+    };
+
     const sendPrompt = async (prompt: string) => {
         if (!prompt.trim()) {
             return;
@@ -96,16 +106,22 @@ export function useClaudeChat() {
         activeChat.value.chat.push({
             role: "user",
             content: prompt,
+            htmlContent: prompt,
             id: Date.now(),
         });
+        updateHtmlContent(
+            prompt,
+            activeChat.value.chat[activeChat.value.chat.length - 1],
+        );
         const assistantResponse: ChatItem = {
             role: "assistant",
             content: "",
+            htmlContent: "",
             id: Date.now(),
         };
         activeChat.value.chat.push(assistantResponse);
         try {
-            const response = anthropic.messages
+            anthropic.messages
                 .stream({
                     messages: activeChat.value.chat.map(
                         ({ role, content }) => ({
@@ -116,16 +132,13 @@ export function useClaudeChat() {
                     model: "claude-3-5-sonnet-20240620",
                     max_tokens: 1024,
                 })
-                .on("text", (text: string) => {
-                    activeChat.value.chat[
-                        activeChat.value.chat.length - 1
-                    ].content += text;
+                .on("text", async (text: string) => {
+                    const lastChatItemIdx = activeChat.value.chat.length - 1;
+                    const lastChatItem = activeChat.value.chat[lastChatItemIdx];
+                    lastChatItem.content += text;
+                    updateHtmlContent(lastChatItem.content, lastChatItem);
                 })
                 .on("end", () => {
-                    debouncedSaveToLocalStorage(
-                        activeChatId.value,
-                        JSON.stringify(activeChat.value),
-                    );
                     generateTitleForChat();
                 });
         } catch (error) {

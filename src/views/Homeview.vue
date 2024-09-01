@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Chat from "@/components/Chat.vue";
 import PromptInput from "@/components/PromptInput.vue";
-import { useClaudeChat } from "@/hooks/use-claude-chat.ts";
+import { useClaudeChat } from "@/hooks/use-claude-chat";
 
 const claudeChat = useClaudeChat();
 

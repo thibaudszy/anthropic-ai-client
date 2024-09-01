@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import ChatItem from "./ChatItem.vue";
-import type { Chat } from "@/components/chat.types.ts";
+import type { Chat } from "@/components/chat.types";
 import type { Ref } from "vue";
 
 type Props = {
     chatData: Ref<Chat>;
 };
-const props = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>
@@ -72,7 +72,7 @@ p {
 .user {
     background-color: var(--color-background-soft);
     align-self: flex-end;
-    width: 50%;
+    width: 70%;
 }
 .assistant {
     background-color: transparent;

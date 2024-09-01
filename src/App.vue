@@ -32,12 +32,12 @@ import SideBar from "@/components/SideBar.vue";
         position: relative;
         height: 100%;
         flex-grow: 1;
-        --main-content-width: calc(100dvw - var(--sidebar-width)) width:
-            clamp(
-                var(--main-content-width),
-                var(--main-content-width),
-                var(--main-content-width)
-            );
+        --main-content-width: calc(100dvw - var(--sidebar-width));
+        width: clamp(
+            var(--main-content-width),
+            var(--main-content-width),
+            var(--main-content-width)
+        );
     }
 }
 </style>
