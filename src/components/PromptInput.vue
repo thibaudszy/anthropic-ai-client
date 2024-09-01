@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { useChatStore } from "../store/chat.ts";
-import { computed } from "vue";
+import { computed, ref } from "vue";
+
+type Emits = {
+    "send-prompt": string;
+};
+const emit = defineEmits<Emits>();
 
 const chatStore = useChatStore();
 const textAreaRows = computed(() => {
@@ -16,14 +21,17 @@ function submitFormOnCommandEnter(keyPressEvent: KeyboardEvent) {
         handleSubmit();
     }
 }
+const promptInitialValue = "";
+const prompt = ref<string>(promptInitialValue);
 function handleSubmit() {
-    chatStore.sendPrompt();
+    emit("send-prompt", prompt.value);
+    prompt.value = promptInitialValue;
 }
 </script>
 
 <template>
     <form @keydown="submitFormOnCommandEnter">
-        <textarea v-model="chatStore.prompt" :rows="textAreaRows"> </textarea>
+        <textarea v-model="prompt" :rows="textAreaRows"> </textarea>
         <button type="submit" @click.prevent="handleSubmit">Send</button>
     </form>
 </template>

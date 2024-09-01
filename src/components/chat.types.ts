@@ -5,6 +5,7 @@ export interface ChatItem {
 
 export interface Chat {
     id: number;
+    title: string;
     chat: ChatItem[];
 }
 

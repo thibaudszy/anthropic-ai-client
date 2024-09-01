@@ -1,27 +1,18 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
-import { useChatStore } from "@/store/chat.ts";
 import ChatItem from "./ChatItem.vue";
-import { useRoute } from "vue-router";
+import type { Chat } from "@/components/chat.types.ts";
 
-const route = useRoute();
-const chatStore = useChatStore();
-
-const chatId = computed(() => route.query.chatid);
-watch(
-    chatId,
-    (newValue) => {
-        chatStore.updateChatId(newValue);
-    },
-    { immediate: true },
-);
+type Props = {
+    chatData: Chat;
+};
+const props = defineProps<Props>();
 </script>
 
 <template>
     <div class="chat-container">
-        <div v-if="chatStore.chat?.chat" class="response-container">
+        <div class="response-container">
             <div
-                v-for="(chatItem, index) in chatStore.chat.chat"
+                v-for="(chatItem, index) in chatData.value.chat"
                 :key="index"
                 class="chat-item"
                 :class="{

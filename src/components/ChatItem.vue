@@ -26,7 +26,6 @@ watch(
             })
             .process(props.chatItem.content || "");
         const str = String(file);
-        console.log(str);
         html.value = str;
     },
     { immediate: true },
