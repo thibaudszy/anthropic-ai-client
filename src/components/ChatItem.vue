@@ -45,7 +45,6 @@ watch(
     background-color: black;
     border-radius: 0.5rem;
     overflow: auto;
-    max-height: 30rem;
     position: relative;
     & .code-block-header {
         background-color: var(--coral);
