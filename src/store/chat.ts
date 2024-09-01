@@ -7,27 +7,30 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStorage } from "@vueuse/core";
+import Anthropic from "@anthropic-ai/sdk";
+import { debounce } from "lodash-es";
 
 export const localStorageChatHistoryKey = "chat-history";
 
-export const useChatStore = defineStore("chat", () => {
-    const route = useRoute();
-    const router = useRouter();
+const debouncedSaveChatToLocalStorage = debounce(saveChatToLocalStorage, 300);
 
-    const chatId = computed(() => {
-        const { chatid } = route.query;
-        if (typeof chatid === "number") return chatid;
-        if (typeof chatid === "string" && !Number.isNaN(parseInt(chatid))) {
-            return parseInt(chatid);
-        }
-        return null;
+export const useChatStore = defineStore("chat", () => {
+    const router = useRouter();
+    const anthropic = new Anthropic({
+        apiKey: import.meta.env.VITE_API_KEY,
+        dangerouslyAllowBrowser: true,
     });
 
-    const initChat = () => {
-        const id = chatId.value;
+    const chatId = ref<number | null>();
+
+    const initChat = (newChatId: number) => {
+        debugger;
+        const id = newChatId;
         if (id != null) {
             try {
-                const storageValue = localStorage.getItem(id.toString());
+                const storageValue = localStorage.getItem(
+                    getChatStorageId(newChatId),
+                );
                 if (storageValue) {
                     return JSON.parse(storageValue);
                 }
@@ -36,7 +39,12 @@ export const useChatStore = defineStore("chat", () => {
         return null;
     };
 
-    const chat = ref<Chat | null>(initChat());
+    const chat = ref<Chat | null>(null);
+
+    const updateChatId = (newChatId: number) => {
+        chatId.value = newChatId;
+        chat.value = initChat(newChatId);
+    };
 
     const chatHistory = useStorage<ChatHistoryItem[]>(
         localStorageChatHistoryKey,
@@ -52,52 +60,34 @@ export const useChatStore = defineStore("chat", () => {
             return;
         }
 
-        if (!chat.value?.chat) {
+        if (!chatId.value) {
             chat.value = createChat();
         }
 
         chat.value.chat.push({ role: "user", content: promptToSend });
-        const AssistantResponse: ChatItem = {
+        const assistantResponse: ChatItem = {
             role: "assistant",
             content: "",
         };
-        chat.value.chat.push(AssistantResponse);
+        chat.value.chat.push(assistantResponse);
         try {
-            const response = await fetch("http://localhost:3000/chat", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(chat.value.chat),
-            });
-
-            if (!response.body) {
-                AssistantResponse.content =
-                    "There was an error getting the response from the assistant";
-                return;
-            }
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder("utf-8");
-            let done = false;
-
-            while (!done) {
-                const { value, done: doneReading } = await reader.read();
-                done = doneReading;
-
-                if (value) {
-                    const chunk = decoder.decode(value, { stream: true });
-                    console.log({ chunk });
-                    chat.value.chat[chat.value.chat.length - 1].content +=
-                        chunk;
-                }
-            }
+            const response = anthropic.messages
+                .stream({
+                    messages: chat.value.chat,
+                    model: "claude-3-5-sonnet-20240620",
+                    max_tokens: 1024,
+                })
+                .on("text", (text: string) => {
+                    console.log("LOG:", text);
+                    chat.value.chat[chat.value.chat.length - 1].content += text;
+                })
+                .on("end", () => {
+                    debugger;
+                    debouncedSaveChatToLocalStorage(chat.value);
+                    // generateTitleForChat();
+                });
         } catch (error) {
-            AssistantResponse.content = "Error: Unable to fetch response";
-        } finally {
-            localStorage.setItem(
-                getChatStorageId(chat.value.id.toString()),
-                JSON.stringify(chat.value),
-            );
+            assistantResponse.content = "Error: Unable to fetch response";
         }
     };
 
@@ -107,15 +97,44 @@ export const useChatStore = defineStore("chat", () => {
             chatId: newId,
             title: "New chat",
         });
-
-        router.replace({ query: { ...route.query, chatid: newId } });
+        const route = useRoute();
+        router.replace({ query: { chatid: newId } });
         return newId;
     };
+
     const createChat: () => Chat = () => {
         return {
             id: generateNewChatId(),
             chat: new Array<ChatItem>(),
         };
+    };
+
+    const generateTitleForChat = async () => {
+        const historyItem = chatHistory.value.find(
+            (el) => el.chatId === parseInt(chatId.value),
+        );
+        debugger;
+        if (!historyItem) {
+            console.error(
+                "something went wrong. There should be an history item",
+            );
+            return;
+        }
+        if (historyItem.title !== "New chat") {
+            return;
+        }
+        const message = await anthropic.messages.create({
+            max_tokens: 1024,
+            messages: [
+                {
+                    role: "user",
+                    content: `Generate a title for this conversation. The title should be maximum 6 words long. Your reply should only contain the title and nothing else. Conversation: ${JSON.stringify(chat.value?.chat)}`,
+                },
+            ],
+            model: "claude-3-opus-20240229",
+        });
+        console.log("content", message.content);
+        historyItem.title = message.content;
     };
 
     return {
@@ -124,10 +143,14 @@ export const useChatStore = defineStore("chat", () => {
         chatId,
         chatHistory,
         sendPrompt,
+        updateChatId,
         generateNewChatId,
     };
 });
 
-function getChatStorageId(id: string) {
+function getChatStorageId(id: number | string) {
     return `chat-${id}`;
+}
+function saveChatToLocalStorage(chat: Chat) {
+    localStorage.setItem(getChatStorageId(chat.id), JSON.stringify(chat));
 }

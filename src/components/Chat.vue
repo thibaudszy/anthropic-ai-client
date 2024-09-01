@@ -2,8 +2,19 @@
 import { ref, computed, watch } from "vue";
 import { useChatStore } from "@/store/chat.ts";
 import ChatItem from "./ChatItem.vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const chatStore = useChatStore();
+
+const chatId = computed(() => route.query.chatid);
+watch(
+    chatId,
+    (newValue) => {
+        chatStore.updateChatId(newValue);
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
