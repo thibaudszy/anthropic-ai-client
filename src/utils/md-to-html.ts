@@ -15,10 +15,7 @@ export async function mdToHtml(mdString: string) {
         .use(enhanceCodeBlocks)
         // @ts-expect-error
         .use(rehypeStarryNight)
-        .use(rehypeStringify, {
-            allowDangerousCharacters: true,
-            allowDangerousHtml: true,
-        })
+        .use(rehypeStringify)
         .process(mdString);
     const str = String(file);
     return str;
