@@ -12,13 +12,16 @@ function onPrompt(prompt: string) {
 
 <template>
     <header>
-        <h1>Chat with Claude</h1>
+        <h1>Claude 3.5 Sonnet</h1>
     </header>
     <Chat class="chat-container" :chat-data="claudeChat.activeChat" />
     <PromptInput class="prompt-input" @send-prompt="onPrompt" />
 </template>
 
 <style scoped>
+h1 {
+    font-size: 20px;
+}
 .chat-container {
     flex-grow: 1;
     overflow: auto;

@@ -64,7 +64,7 @@ textarea {
     padding-block: 0.5rem;
     background-color: transparent;
     border: none;
-    max-height: 20dvh;
+    max-height: clamp(4rem, 20dvh, 20dvh);
     scrollbar-color: var(--ghost-white) hsl(0deg 0% 18.43%);
     &:focus {
         outline: none;

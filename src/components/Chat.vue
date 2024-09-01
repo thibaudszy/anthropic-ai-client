@@ -74,7 +74,7 @@ p {
     width: 50%;
 }
 .assistant {
-    background-color: var(--color-background-light);
-    max-width: 80%;
+    background-color: transparent;
+    max-width: 90%;
 }
 </style>
