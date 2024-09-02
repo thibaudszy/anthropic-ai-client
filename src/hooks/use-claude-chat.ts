@@ -6,6 +6,7 @@ import { useChatHistory } from "@/stores/chat-history";
 import { storeToRefs } from "pinia";
 import { debounce } from "lodash-es";
 import { MdToHtml } from "@/utils/md-to-html";
+import { defaultPreset, hidePreset } from "./preset";
 
 const debouncedSaveToLocalStorage = debounce((key: string, data: string) => {
     localStorage.setItem(key, data);
@@ -24,11 +25,12 @@ export function useClaudeChat() {
         return newId;
     });
 
-    const getDefaultChatValue = () => ({
-        id: activeChatId.value,
-        title: "New chat",
-        chat: [],
-    });
+    const getDefaultChatValue = () =>
+        ({
+            id: activeChatId.value,
+            title: "New chat",
+            chat: [],
+        }) as Chat;
     const activeChat = ref<Chat>(getDefaultChatValue());
 
     watch(
@@ -109,9 +111,12 @@ export function useClaudeChat() {
             });
         }
 
+        const baseInstructions = !activeChat.value.chat.length
+            ? hidePreset(defaultPreset) + "\n"
+            : "";
         activeChat.value.chat.push({
             role: "user",
-            content: prompt,
+            content: baseInstructions + prompt,
             htmlContent: prompt,
             id: Date.now(),
         });

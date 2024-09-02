@@ -19,6 +19,7 @@ defineProps<Props>();
                 :class="{
                     assistant: chatItem.role === 'assistant',
                     user: chatItem.role === 'user',
+                    hidden: chatItem.hidden,
                 }"
             >
                 <ChatItem :chatItem="chatItem"></ChatItem>
@@ -77,5 +78,8 @@ p {
 .assistant {
     background-color: transparent;
     max-width: 90%;
+}
+.hidden {
+    visibility: hidden;
 }
 </style>

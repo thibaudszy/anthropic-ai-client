@@ -3,6 +3,7 @@ export interface ChatItem {
     content: string;
     htmlContent: string;
     id: number;
+    hidden?: boolean;
 }
 
 export interface Chat {
