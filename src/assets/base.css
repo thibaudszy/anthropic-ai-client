@@ -23,6 +23,10 @@
     --color-text: var(--ghost-white);
 }
 
+:root {
+    --icon-btn-diameter: 30px;
+}
+
 /* @media (prefers-color-scheme: dark) {
     :root {
         --color-background: var(--vt-c-black);
@@ -90,7 +94,6 @@ button.icon {
     display: flex;
     justify-content: center;
     align-items: center;
-    --icon-btn-diameter: 30px;
     max-height: var(--icon-btn-diameter);
     max-width: var(--icon-btn-diameter);
     min-width: var(--icon-btn-diameter);
