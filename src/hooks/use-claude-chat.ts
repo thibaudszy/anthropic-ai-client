@@ -5,6 +5,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { useChatHistory } from "@/stores/chat-history";
 import { storeToRefs } from "pinia";
 import { debounce } from "lodash-es";
+import { MdToHtml } from "@/utils/md-to-html";
 
 const debouncedSaveToLocalStorage = debounce((key: string, data: string) => {
     localStorage.setItem(key, data);
@@ -82,10 +83,12 @@ export function useClaudeChat() {
         historyItem.title = message.content[0].text;
     };
 
-    const updateHtmlContent = async (mdContent: string, chatItem: ChatItem) => {
-        const { mdToHtml } = await import("@/utils/md-to-html");
-
-        chatItem.htmlContent = await mdToHtml(mdContent);
+    const updateHtmlContent = async (
+        mdContent: string,
+        mdToHtml: MdToHtml,
+        chatItem: ChatItem,
+    ) => {
+        chatItem.htmlContent = await mdToHtml.transpile(mdContent);
         debouncedSaveToLocalStorage(
             activeChatId.value,
             JSON.stringify(activeChat.value),
@@ -96,6 +99,8 @@ export function useClaudeChat() {
         if (!prompt.trim()) {
             return;
         }
+
+        const mdToHtml = new MdToHtml();
 
         if (!route.query.chatid) {
             chatHistoryStore.updateChatHistory(activeChat.value);
@@ -112,6 +117,7 @@ export function useClaudeChat() {
         });
         updateHtmlContent(
             prompt,
+            mdToHtml,
             activeChat.value.chat[activeChat.value.chat.length - 1],
         );
         const assistantResponse: ChatItem = {
@@ -137,7 +143,11 @@ export function useClaudeChat() {
                     const lastChatItemIdx = activeChat.value.chat.length - 1;
                     const lastChatItem = activeChat.value.chat[lastChatItemIdx];
                     lastChatItem.content += text;
-                    updateHtmlContent(lastChatItem.content, lastChatItem);
+                    updateHtmlContent(
+                        lastChatItem.content,
+                        mdToHtml,
+                        lastChatItem,
+                    );
                 })
                 .on("end", () => {
                     generateTitleForChat();
