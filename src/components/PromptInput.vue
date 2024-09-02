@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useTextareaAutosize } from "@vueuse/core";
+import { computed, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 
 type Emits = {
     (e: "send-prompt", value: string): void;
@@ -8,6 +10,20 @@ type Emits = {
 const emit = defineEmits<Emits>();
 const { textarea, input } = useTextareaAutosize();
 
+onMounted(() => {
+    textarea.value.focus();
+});
+const route = useRoute();
+const activeChatId = computed(() => {
+    const { chatid } = route.query;
+    return chatid;
+});
+
+watch(activeChatId, (newValue) => {
+    if (!newValue) {
+        textarea.value.focus();
+    }
+});
 const promptInitialValue = "";
 
 function submitFormOnCommandEnter(keyPressEvent: KeyboardEvent) {
