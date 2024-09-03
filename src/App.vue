@@ -22,20 +22,22 @@ function handleApiKeySubmit() {
 <template>
     <div class="app-content">
         <SideBar class="app-sidebar" />
-        <main class="main-content">
-            <form
-                v-if="showApiKeyRequest"
-                class="api-key-form"
-                @submit.prevent="handleApiKeySubmit"
-            >
-                <label>Input the Anthropic API key here </label>
-                <div>
-                    <input v-model="apiKeyInput" />
-                    <button>submit</button>
-                </div>
-            </form>
-            <RouterView v-else />
-        </main>
+        <div class="main-content-container">
+            <main class="main-content">
+                <form
+                    v-if="showApiKeyRequest"
+                    class="api-key-form"
+                    @submit.prevent="handleApiKeySubmit"
+                >
+                    <label>Input the Anthropic API key here </label>
+                    <div>
+                        <input v-model="apiKeyInput" />
+                        <button>submit</button>
+                    </div>
+                </form>
+                <RouterView v-else />
+            </main>
+        </div>
     </div>
 </template>
 
@@ -52,7 +54,11 @@ function handleApiKeySubmit() {
         width: var(--sidebar-width);
         min-width: var(--sidebar-width);
     }
-
+    & .main-content-container {
+        display: flex;
+        justify-content: center;
+        flex-grow: 1;
+    }
     & .main-content {
         display: flex;
         flex-direction: column;
@@ -60,12 +66,7 @@ function handleApiKeySubmit() {
         position: relative;
         height: 100%;
         flex-grow: 1;
-        --main-content-width: calc(100dvw - var(--sidebar-width));
-        width: clamp(
-            var(--main-content-width),
-            var(--main-content-width),
-            var(--main-content-width)
-        );
+        max-width: 100rem;
     }
 }
 .api-key-form {
