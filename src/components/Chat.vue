@@ -1,22 +1,50 @@
 <script setup lang="ts">
 import ChatItem from "./ChatItem.vue";
 import type { Chat } from "@/components/chat.types";
-import { computed, type Ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { vIntersectionObserver } from "@vueuse/components";
+import { debounce } from "lodash-es";
 
 type Props = {
-    chatData: Ref<Chat>;
-    error: Ref<string | null>;
-    isStreaming: Ref<boolean>;
+    chatData: Chat;
+    error: string | null;
+    isStreaming: boolean;
 };
 const props = defineProps<Props>();
 
 type Emits = {
     (e: "retry"): void;
 };
+const bottomOfChat = ref<HTMLElement | null>();
+const autoScroll = ref<boolean>(true);
+
+async function onIntersectionObserver([
+    { isIntersecting },
+]: IntersectionObserverEntry[]) {
+    autoScroll.value = isIntersecting;
+}
+
+const scrollToBottom = debounce(() => {
+    bottomOfChat.value?.scrollIntoView({ behavior: "auto" });
+}, 50);
+
+onMounted(() => {
+    scrollToBottom();
+});
+
+watch(props.chatData, (newValue, oldValue) => {
+    if (newValue.chat.length > oldValue.chat.length) {
+        scrollToBottom();
+    }
+
+    if (autoScroll.value) {
+        scrollToBottom();
+    }
+});
 
 const emit = defineEmits<Emits>();
 const lastChatRole = computed(() => {
-    return props.chatData.value.chat?.at(-1)?.role;
+    return props.chatData.chat?.at(-1)?.role;
 });
 </script>
 
@@ -24,7 +52,7 @@ const lastChatRole = computed(() => {
     <div class="chat-container">
         <div class="response-container">
             <div
-                v-for="chatItem in chatData.value.chat"
+                v-for="chatItem in chatData.chat"
                 :key="chatItem.id"
                 class="chat-item"
                 :class="{
@@ -35,22 +63,28 @@ const lastChatRole = computed(() => {
             >
                 <ChatItem :chatItem="chatItem"></ChatItem>
             </div>
-            <div v-if="error.value" role="alert" aria-polite="assertive">
+            <div v-if="error" role="alert" aria-polite="assertive">
                 <div>
                     <h4>Error</h4>
                     <p>
-                        {{ error.value }}
+                        {{ error }}
                     </p>
                 </div>
                 <button
                     v-if="lastChatRole === 'user'"
                     type="button"
-                    :disabled="isStreaming.value"
+                    :disabled="isStreaming"
                     @click="$emit('retry')"
                 >
                     Retry
                 </button>
             </div>
+        </div>
+        <div class="bottom-relative-container" ref="bottomOfChat">
+            <div
+                v-intersection-observer="onIntersectionObserver"
+                class="bottom-anchor"
+            ></div>
         </div>
     </div>
 </template>
@@ -59,10 +93,11 @@ const lastChatRole = computed(() => {
 .chat-container {
     margin: 0;
     text-align: center;
-    padding: 3rem;
-    padding-top: 1rem;
+    padding: 1rem 3rem;
     margin-bottom: 1rem;
     width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .response-container {
@@ -124,5 +159,16 @@ div[role="alert"] {
     & button {
         width: fit-content;
     }
+}
+.bottom-relative-container {
+    position: relative;
+}
+
+.bottom-anchor {
+    height: 10px;
+    position: absolute;
+    bottom: 0;
+    pointer-events: none;
+    width: 50%;
 }
 </style>

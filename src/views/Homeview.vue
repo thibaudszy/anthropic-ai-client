@@ -16,10 +16,11 @@ function onPrompt(prompt: string) {
         <h1>Claude 3.5 Sonnet</h1>
     </header>
     <Chat
+        :key="claudeChat.activeChat.value.id"
         class="chat-container"
-        :chat-data="claudeChat.activeChat"
-        :error="claudeChat.error"
-        :is-streaming="claudeChat.isLoading"
+        :chat-data="unref(claudeChat.activeChat)"
+        :error="unref(claudeChat.error)"
+        :is-streaming="unref(claudeChat.isLoading)"
         @retry="claudeChat.retryStream"
     />
     <PromptInput
