@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { useTextareaAutosize } from "@vueuse/core";
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, type Ref } from "vue";
 import { useRoute } from "vue-router";
 
 type Emits = {
     (e: "send-prompt", value: string): void;
 };
-
 const emit = defineEmits<Emits>();
+
+type Props = {
+    isStreaming: Ref<boolean>;
+};
+const props = defineProps<Props>();
+
 const { textarea, input } = useTextareaAutosize();
 
 onMounted(() => {
@@ -37,6 +42,9 @@ function submitFormOnCommandEnter(keyPressEvent: KeyboardEvent) {
 }
 
 function handleSubmit() {
+    if (props.isStreaming.value) {
+        return;
+    }
     emit("send-prompt", input.value as string);
     input.value = promptInitialValue;
 }
@@ -51,7 +59,13 @@ function handleSubmit() {
             placeholder="Proomt goes here"
         >
         </textarea>
-        <button type="submit" @click.prevent="handleSubmit">Send</button>
+        <button
+            type="submit"
+            :disabled="isStreaming.value"
+            @click.prevent="handleSubmit"
+        >
+            Send
+        </button>
     </form>
 </template>
 

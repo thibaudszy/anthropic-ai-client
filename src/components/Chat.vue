@@ -1,12 +1,23 @@
 <script setup lang="ts">
 import ChatItem from "./ChatItem.vue";
 import type { Chat } from "@/components/chat.types";
-import type { Ref } from "vue";
+import { computed, type Ref } from "vue";
 
 type Props = {
     chatData: Ref<Chat>;
+    error: Ref<string | null>;
+    isStreaming: Ref<boolean>;
 };
-defineProps<Props>();
+const props = defineProps<Props>();
+
+type Emits = {
+    (e: "retry"): void;
+};
+
+const emit = defineEmits<Emits>();
+const lastChatRole = computed(() => {
+    return props.chatData.value.chat?.at(-1)?.role;
+});
 </script>
 
 <template>
@@ -23,6 +34,22 @@ defineProps<Props>();
                 }"
             >
                 <ChatItem :chatItem="chatItem"></ChatItem>
+            </div>
+            <div v-if="error.value" role="alert" aria-polite="assertive">
+                <div>
+                    <h4>Error</h4>
+                    <p>
+                        {{ error.value }}
+                    </p>
+                </div>
+                <button
+                    v-if="lastChatRole === 'user'"
+                    type="button"
+                    :disabled="isStreaming.value"
+                    @click="$emit('retry')"
+                >
+                    Retry
+                </button>
             </div>
         </div>
     </div>
@@ -81,5 +108,21 @@ p {
 }
 .hidden {
     visibility: hidden;
+}
+div[role="alert"] {
+    color: red;
+    border: 2px solid red;
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--light-night);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    & h4 {
+        font-weight: bold;
+    }
+    & button {
+        width: fit-content;
+    }
 }
 </style>

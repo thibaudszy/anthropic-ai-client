@@ -14,8 +14,18 @@ function onPrompt(prompt: string) {
     <header>
         <h1>Claude 3.5 Sonnet</h1>
     </header>
-    <Chat class="chat-container" :chat-data="claudeChat.activeChat" />
-    <PromptInput class="prompt-input" @send-prompt="onPrompt" />
+    <Chat
+        class="chat-container"
+        :chat-data="claudeChat.activeChat"
+        :error="claudeChat.error"
+        :is-streaming="claudeChat.isLoading"
+        @retry="claudeChat.retryStream"
+    />
+    <PromptInput
+        class="prompt-input"
+        :is-streaming="claudeChat.isLoading"
+        @send-prompt="onPrompt"
+    />
 </template>
 
 <style scoped>

@@ -7,7 +7,6 @@ import { storeToRefs } from "pinia";
 import { debounce } from "lodash-es";
 import { MdToHtml } from "@/utils/md-to-html";
 import { defaultPreset, hidePreset } from "./preset";
-import type { RawMessageDeltaEvent } from "@anthropic-ai/sdk/src/resources/messages.js";
 
 const debouncedSaveToLocalStorage = debounce((key: string, data: string) => {
     localStorage.setItem(key, data);
@@ -98,8 +97,17 @@ export function useClaudeChat() {
         );
     };
 
+    const retryStream = async () => {
+        await getResponseForActiveChat(new MdToHtml());
+    };
+
+    const isLoading = ref(false);
+    const error = ref<string | null>(null);
+
     const sendPrompt = async (prompt: string) => {
-        if (!prompt.trim()) {
+        isLoading.value = true;
+        error.value = null;
+        if (!prompt?.trim()) {
             return;
         }
 
@@ -133,6 +141,10 @@ export function useClaudeChat() {
             id: Date.now(),
         };
         activeChat.value.chat.push(assistantResponse);
+        await getResponseForActiveChat(mdToHtml);
+    };
+
+    const getResponseForActiveChat = async (mdToHtml: MdToHtml) => {
         try {
             const stream = await anthropic.messages.create({
                 messages: activeChat.value.chat.map(({ role, content }) => ({
@@ -158,12 +170,25 @@ export function useClaudeChat() {
                     );
                 }
             }
-        } catch (error) {
-            assistantResponse.content = "Error: Unable to fetch response";
+        } catch (err) {
+            if (err instanceof Error) {
+                error.value = err?.message;
+            } else {
+                error.value = "A weird error occurred";
+            }
+        } finally {
+            isLoading.value = false;
         }
     };
 
-    return { activeChat, sendPrompt, chatHistory };
+    return {
+        activeChat,
+        error,
+        isLoading,
+        sendPrompt,
+        retryStream,
+        chatHistory,
+    };
 }
 
 function getChatStorageId(id: number) {

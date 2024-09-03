@@ -8,6 +8,7 @@
     --bittersweet-dark: hsla(4, 79%, 60%, 1);
     --darkorange: hsla(4, 79%, 60%, 1);
     --night: hsla(330, 6%, 7%, 1);
+    --light-night: hsla(330, 6%, 20%, 1);
     --gray: hsla(330, 0%, 25%, 1);
 }
 
@@ -111,6 +112,12 @@ button:hover {
 button:active {
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
 }
 
 a {
