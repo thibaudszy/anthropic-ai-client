@@ -40,7 +40,8 @@ h1 {
     overflow: auto;
 }
 header {
-    width: 100%;
+    width: calc(100dvw - var(--sidebar-width));
+    padding-right: calc(var(--sidebar-width) / 2);
     text-align: center;
     box-shadow:
         0 4px 6px -1px rgba(255, 255, 255, 0.1),
