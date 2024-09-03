@@ -144,6 +144,7 @@ export function useClaudeChat() {
         await getResponseForActiveChat(mdToHtml);
     };
 
+    const streamController = ref<AbortController | null>(null);
     const getResponseForActiveChat = async (mdToHtml: MdToHtml) => {
         try {
             const stream = await anthropic.messages.create({
@@ -155,6 +156,7 @@ export function useClaudeChat() {
                 max_tokens: 1024,
                 stream: true,
             });
+            streamController.value = stream.controller;
 
             for await (const messageStreamEvent of stream) {
                 // @ts-expect-error
@@ -170,6 +172,8 @@ export function useClaudeChat() {
                     );
                 }
             }
+            streamController.value = null;
+            await generateTitleForChat();
         } catch (err) {
             if (err instanceof Error) {
                 error.value = err?.message;
@@ -187,7 +191,7 @@ export function useClaudeChat() {
         isLoading,
         sendPrompt,
         retryStream,
-        chatHistory,
+        streamController,
     };
 }
 

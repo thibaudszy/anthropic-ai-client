@@ -10,6 +10,7 @@ const emit = defineEmits<Emits>();
 
 type Props = {
     isStreaming: Ref<boolean>;
+    streamController: AbortController | null;
 };
 const props = defineProps<Props>();
 
@@ -60,6 +61,28 @@ function handleSubmit() {
         >
         </textarea>
         <button
+            v-if="streamController"
+            class="icon"
+            type="button"
+            title="Abort"
+            @click="streamController?.abort()"
+        >
+            <svg
+                class="w-6 h-6 text-gray-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    d="M7 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7Z"
+                />
+            </svg>
+        </button>
+        <button
+            v-else
             type="submit"
             :disabled="isStreaming.value"
             @click.prevent="handleSubmit"

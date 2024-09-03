@@ -2,6 +2,7 @@
 import Chat from "@/components/Chat.vue";
 import PromptInput from "@/components/PromptInput.vue";
 import { useClaudeChat } from "@/hooks/use-claude-chat";
+import { unref } from "vue";
 
 const claudeChat = useClaudeChat();
 
@@ -23,6 +24,7 @@ function onPrompt(prompt: string) {
     />
     <PromptInput
         class="prompt-input"
+        :stream-controller="unref(claudeChat.streamController)"
         :is-streaming="claudeChat.isLoading"
         @send-prompt="onPrompt"
     />
