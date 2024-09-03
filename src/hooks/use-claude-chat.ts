@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import { debounce } from "lodash-es";
 import { MdToHtml } from "@/utils/md-to-html";
 import { defaultPreset, hidePreset } from "./preset";
+import type { RawMessageDeltaEvent } from "@anthropic-ai/sdk/src/resources/messages.js";
 
 const debouncedSaveToLocalStorage = debounce((key: string, data: string) => {
     localStorage.setItem(key, data);
@@ -133,30 +134,33 @@ export function useClaudeChat() {
         };
         activeChat.value.chat.push(assistantResponse);
         try {
-            anthropic.messages
-                .stream({
-                    messages: activeChat.value.chat.map(
-                        ({ role, content }) => ({
-                            role,
-                            content,
-                        }),
-                    ),
-                    model: "claude-3-5-sonnet-20240620",
-                    max_tokens: 1024,
-                })
-                .on("text", async (text: string) => {
-                    const lastChatItemIdx = activeChat.value.chat.length - 1;
-                    const lastChatItem = activeChat.value.chat[lastChatItemIdx];
-                    lastChatItem.content += text;
-                    updateHtmlContent(
-                        lastChatItem.content,
-                        mdToHtml,
-                        lastChatItem,
-                    );
-                })
-                .on("end", () => {
-                    generateTitleForChat();
-                });
+            const stream = await anthropic.messages.create({
+                messages: activeChat.value.chat.map(({ role, content }) => ({
+                    role,
+                    content,
+                })),
+                model: "claude-3-5-sonnet-20240620",
+                max_tokens: 1024,
+                stream: true,
+            });
+
+            for await (const messageStreamEvent of stream) {
+                if ((messageStreamEvent as RawMessageDeltaEvent)?.delta) {
+                    const text = messageStreamEvent.delta?.text;
+                    if (text) {
+                        const lastChatItemIdx =
+                            activeChat.value.chat.length - 1;
+                        const lastChatItem =
+                            activeChat.value.chat[lastChatItemIdx];
+                        lastChatItem.content += text;
+                        updateHtmlContent(
+                            lastChatItem.content,
+                            mdToHtml,
+                            lastChatItem,
+                        );
+                    }
+                }
+            }
         } catch (error) {
             assistantResponse.content = "Error: Unable to fetch response";
         }
