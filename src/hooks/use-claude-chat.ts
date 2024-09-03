@@ -145,20 +145,17 @@ export function useClaudeChat() {
             });
 
             for await (const messageStreamEvent of stream) {
-                if ((messageStreamEvent as RawMessageDeltaEvent)?.delta) {
-                    const text = messageStreamEvent.delta?.text;
-                    if (text) {
-                        const lastChatItemIdx =
-                            activeChat.value.chat.length - 1;
-                        const lastChatItem =
-                            activeChat.value.chat[lastChatItemIdx];
-                        lastChatItem.content += text;
-                        updateHtmlContent(
-                            lastChatItem.content,
-                            mdToHtml,
-                            lastChatItem,
-                        );
-                    }
+                // @ts-expect-error
+                const text = messageStreamEvent?.delta?.text;
+                if (text) {
+                    const lastChatItemIdx = activeChat.value.chat.length - 1;
+                    const lastChatItem = activeChat.value.chat[lastChatItemIdx];
+                    lastChatItem.content += text;
+                    updateHtmlContent(
+                        lastChatItem.content,
+                        mdToHtml,
+                        lastChatItem,
+                    );
                 }
             }
         } catch (error) {
