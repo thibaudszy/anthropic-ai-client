@@ -30,7 +30,7 @@ function handleApiKeySubmit() {
             >
                 <label>Input the Anthropic API key here </label>
                 <div>
-                    <input v-model="apiKeyInput" />
+                    <input v-model="apiKeyInput" type="password" />
                     <button>submit</button>
                 </div>
             </form>
