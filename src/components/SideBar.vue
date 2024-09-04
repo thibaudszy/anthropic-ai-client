@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useChatHistory } from "@/stores/chat-history";
 import { storeToRefs } from "pinia";
 import type { ChatHistoryItem } from "./chat.types";
 
 const route = useRoute();
+const router = useRouter();
 
 const chatHistoryStore = useChatHistory();
 const { chatHistory } = storeToRefs(chatHistoryStore);
@@ -13,6 +14,12 @@ function deleteHistoryItem(historyItemToDelete: ChatHistoryItem) {
     chatHistoryStore.chatHistory = chatHistoryStore.chatHistory.filter((el) => {
         return el.chatId !== historyItemToDelete.chatId;
     });
+    if (route.query.chatid === historyItemToDelete.chatId) {
+        const newQuery = { ...route.query };
+        delete newQuery.chatid;
+        router.replace({ query: newQuery });
+    }
+    localStorage.removeItem(historyItemToDelete.chatId);
 }
 </script>
 
