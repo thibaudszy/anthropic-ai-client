@@ -43,6 +43,9 @@ export function useClaudeChat() {
                     return;
                 }
             } catch {}
+            const newQuery = { ...route.query };
+            delete newQuery.chatid;
+            router.replace({ query: newQuery });
             activeChat.value = getDefaultChatValue();
         },
         { immediate: true },

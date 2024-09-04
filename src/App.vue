@@ -31,7 +31,7 @@ function handleApiKeySubmit() {
                 <label>Input the Anthropic API key here </label>
                 <div>
                     <input v-model="apiKeyInput" type="password" />
-                    <button>submit</button>
+                    <button>Submit</button>
                 </div>
             </form>
             <RouterView v-else />
