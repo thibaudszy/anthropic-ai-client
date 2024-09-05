@@ -17,7 +17,7 @@ defineProps<{ chatItem: ChatItem }>();
     margin-block: 1rem;
     background-color: black;
     border-radius: 0.5rem;
-    overflow: auto;
+    overflow-x: hidden;
     position: relative;
     & .code-block-header {
         background-color: var(--coral);
@@ -48,6 +48,7 @@ defineProps<{ chatItem: ChatItem }>();
     & > * {
         padding-inline: 1rem;
         padding-block: 0.5rem;
+        overflow: auto;
     }
 }
 </style>

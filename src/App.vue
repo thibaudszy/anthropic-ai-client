@@ -55,6 +55,7 @@ function handleApiKeySubmit() {
         min-width: var(--sidebar-width);
     }
     & .main-content-container {
+        max-width: calc(100% - var(--sidebar-width));
         display: flex;
         justify-content: center;
         flex-grow: 1;
@@ -66,7 +67,7 @@ function handleApiKeySubmit() {
         position: relative;
         height: 100%;
         flex-grow: 1;
-        max-width: 100rem;
+        max-width: min(100%, 100rem);
     }
 }
 .api-key-form {
