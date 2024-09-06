@@ -94,6 +94,9 @@ const lastChatRole = computed(() => {
     margin: 0;
     text-align: center;
     padding: 1rem 3rem;
+    @media (max-width: 800px) {
+        padding: 1rem 1rem;
+    }
     margin-bottom: 1rem;
     width: 100%;
     display: flex;
@@ -131,6 +134,10 @@ p {
     max-width: 80%;
     border-radius: 1rem;
     padding: 0.5rem 1rem;
+    @media (max-width: 800px) {
+        max-width: 100%;
+        padding: 0.5rem;
+    }
 }
 .user {
     background-color: var(--color-background-soft);

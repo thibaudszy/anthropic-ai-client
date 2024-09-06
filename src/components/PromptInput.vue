@@ -112,7 +112,7 @@ form {
 
 textarea {
     resize: none;
-    width: clamp(10rem, 40dvw, 40rem);
+    width: clamp(15rem, 40dvw, 40rem);
     color: var(--ghost-white);
     padding-block: 0.5rem;
     background-color: transparent;
@@ -125,4 +125,5 @@ textarea {
         border-color: inherit;
     }
 }
+
 </style>
