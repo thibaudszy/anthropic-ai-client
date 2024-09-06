@@ -124,6 +124,8 @@ textarea {
         box-shadow: none;
         border-color: inherit;
     }
+    @media (max-width: 800px) {
+        font-size: large;
+    }
 }
-
 </style>
