@@ -72,10 +72,6 @@ ul {
     width: 100%;
     height: 100%;
     overflow: auto;
-    position: relative;
-    @media (max-width: 800px) {
-        top: -2rem;
-    }
 
     & li {
         width: 100%;
