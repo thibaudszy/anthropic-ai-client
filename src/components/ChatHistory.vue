@@ -72,6 +72,10 @@ ul {
     width: 100%;
     height: 100%;
     overflow: auto;
+    position: relative;
+    @media (max-width: 800px) {
+        top: -2rem;
+    }
 
     & li {
         width: 100%;
@@ -83,6 +87,10 @@ ul {
             display: block;
             padding-block: 0.5rem;
             padding-inline: 1rem;
+            @media (max-width: 800px) {
+                padding-block: 1rem;
+                margin-right: 3rem;
+            }
         }
 
         & .delete {
@@ -95,16 +103,21 @@ ul {
             align-items: center;
             justify-content: flex-end;
             padding-inline: 0.5rem;
+            @media (max-width: 800px) {
+                padding-inline: 1rem;
+            }
+
             & button.icon {
                 visibility: visible;
             }
-
-            & button.icon:not(:focus) {
-                --invisible-btn-diameter: 0px;
-                max-height: var(--invisible-btn-diameter);
-                max-width: var(--invisible-btn-diameter);
-                min-width: var(--invisible-btn-diameter);
-                min-height: var(--invisible-btn-diameter);
+            @media (min-width: 800px) {
+                & button.icon:not(:focus) {
+                    --invisible-btn-diameter: 0px;
+                    max-height: var(--invisible-btn-diameter);
+                    max-width: var(--invisible-btn-diameter);
+                    min-width: var(--invisible-btn-diameter);
+                    min-height: var(--invisible-btn-diameter);
+                }
             }
         }
 
