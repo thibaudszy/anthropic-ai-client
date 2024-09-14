@@ -45,7 +45,7 @@ function handleApiKeySubmit() {
                     </svg>
                 </button>
             </RouterLink>
-            <h1>Claude 3.5 Sonnet</h1>
+            <h1>ChatGPT-4o</h1>
             <NewChat class="mobile-link" />
         </header>
         <div class="flex-content">

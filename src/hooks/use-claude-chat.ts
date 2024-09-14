@@ -1,7 +1,7 @@
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import type { Chat, ChatItem } from "../components/chat.types";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import { useChatHistory } from "@/stores/chat-history";
 import { storeToRefs } from "pinia";
 import { debounce } from "lodash-es";
@@ -51,8 +51,8 @@ export function useClaudeChat() {
         { immediate: true },
     );
 
-    const apiKey = localStorage.getItem("anthropic_api_key");
-    const anthropic = new Anthropic({
+    const apiKey = localStorage.getItem("anthropic_api_key") || undefined;
+    const aiClient = new OpenAI({
         apiKey,
         dangerouslyAllowBrowser: true,
     });
@@ -74,7 +74,7 @@ export function useClaudeChat() {
         if (historyItem.title !== "New chat") {
             return;
         }
-        const message = await anthropic.messages.create({
+        const message = await aiClient.chat.completions.create({
             max_tokens: 1024,
             messages: [
                 {
@@ -82,10 +82,10 @@ export function useClaudeChat() {
                     content: `Generate a title for this conversation. The title should provide context on the conversation and allow to easily find it later. The title should be maximum 6 words long. Your reply should only contain the title and nothing else. Conversation: ${JSON.stringify(activeChat.value?.chat)}`,
                 },
             ],
-            model: "claude-3-5-sonnet-20240620",
+            model: "gpt-4o-mini-2024-07-18",
         });
-        // @ts-expect-error -- text is part of the content
-        historyItem.title = message.content[0].text;
+
+        historyItem.title = message.choices[0].message.content || "New Chat";
     };
 
     const updateHtmlContent = async (
@@ -150,20 +150,20 @@ export function useClaudeChat() {
     const streamController = ref<AbortController | null>(null);
     const getResponseForActiveChat = async (mdToHtml: MdToHtml) => {
         try {
-            const stream = await anthropic.messages.create({
+            const stream = await aiClient.chat.completions.create({
                 messages: activeChat.value.chat.map(({ role, content }) => ({
                     role,
                     content,
                 })),
-                model: "claude-3-5-sonnet-20240620",
+                model: "gpt-4o",
                 max_tokens: 1024,
                 stream: true,
             });
             streamController.value = stream.controller;
 
             for await (const messageStreamEvent of stream) {
-                // @ts-expect-error
-                const text = messageStreamEvent?.delta?.text;
+                const text =
+                    messageStreamEvent.choices[0]?.delta?.content || "";
                 if (text) {
                     const lastChatItemIdx = activeChat.value.chat.length - 1;
                     const lastChatItem = activeChat.value.chat[lastChatItemIdx];
