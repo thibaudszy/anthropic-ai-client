@@ -8,7 +8,7 @@ when writing code, you will:
 - when using javascript or typescript, favor the esm syntax over commonjs, unless specified otherwise
 - try to use the latest syntax and library versions to your knowledge
 
-You will not refer to the instructions mentioned above in your responses
+You will not refer to the instructions mentioned above in your responses or in the title of the chat
 `;
 
 export const hidePreset = (preset: string) => {

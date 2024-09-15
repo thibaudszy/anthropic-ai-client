@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import SideBar from "@/components/SideBar.vue";
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import NewChat from "./components/NewChat.vue";
+import { vOnClickOutside } from "@vueuse/components";
+import { router } from "./router/router";
 
 const showApiKeyRequest = ref(false);
 if (!localStorage.getItem("openai_api_key")) {
@@ -18,35 +20,63 @@ function handleApiKeySubmit() {
     apiKeyInput.value = "";
     showApiKeyRequest.value = false;
 }
+
+const isPopupOpen = ref<boolean>(false);
+function togglePopup() {
+    isPopupOpen.value = !isPopupOpen.value;
+}
+
+function resetApiKey() {
+    localStorage.removeItem("openai_api_key");
+    router.push({ name: "home" });
+    location.reload();
+}
 </script>
 
 <template>
     <div class="app-content">
         <header class="app-header">
-            <RouterLink :to="{ name: 'history' }" class="mobile-link">
-                <button class="icon" title="history">
+            <NewChat class="mobile-link" />
+            <h1>ChatGPT-4o</h1>
+            <div
+                class="menu-container"
+                v-on-click-outside="() => (isPopupOpen = false)"
+            >
+                <button class="icon" title="menu" @click="togglePopup">
                     <svg
                         class="w-6 h-6 text-gray-800 dark:text-white"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
                         height="24"
-                        fill="currentColor"
+                        fill="none"
                         viewBox="0 0 24 24"
                     >
                         <path
-                            fill-rule="evenodd"
-                            d="M20 10H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM9 13v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1Z"
-                            clip-rule="evenodd"
-                        />
-                        <path
-                            d="M2 6a2 2 0 0 1 2-2h16a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2Z"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-width="2"
+                            d="M5 7h14M5 12h14M5 17h14"
                         />
                     </svg>
                 </button>
-            </RouterLink>
-            <h1>ChatGPT-4o</h1>
-            <NewChat class="mobile-link" />
+                <div
+                    v-show="isPopupOpen"
+                    class="popup"
+                    :class="{ open: isPopupOpen }"
+                    @click="isPopupOpen = false"
+                >
+                    <RouterLink
+                        class="button ghost chat-history-link"
+                        :to="{ name: 'history' }"
+                    >
+                        Chat history
+                    </RouterLink>
+                    <button class="ghost" @click="resetApiKey">
+                        Reset API key
+                    </button>
+                </div>
+            </div>
         </header>
         <div class="flex-content">
             <SideBar class="app-sidebar" />
@@ -129,22 +159,52 @@ function handleApiKeySubmit() {
     justify-content: center;
     z-index: 1;
     background-color: var(--night);
+    justify-content: space-between;
+    padding-inline: 1rem;
     @media (max-width: 800px) {
         height: 3rem;
-        justify-content: space-between;
-        padding-inline: 1rem;
     }
     box-shadow:
         0 4px 6px -1px rgba(255, 255, 255, 0.1),
         0 2px 4px -1px rgba(255, 255, 255, 0.06);
     & .mobile-link {
-        display: none;
+        visibility: hidden;
         @media (max-width: 800px) {
-            display: block;
+            visibility: visible;
         }
     }
 }
 .flex-content {
     display: flex;
+}
+
+.menu-container {
+    position: relative;
+}
+.popup {
+    font-size: large;
+    position: absolute;
+    top: 105%;
+    right: 0;
+    background-color: black;
+    border-radius: 1rem;
+    padding: 1rem;
+    width: 15rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5rem;
+    box-shadow:
+        0 4px 6px -1px rgba(255, 255, 255, 0.1),
+        0 2px 4px -1px rgba(255, 255, 255, 0.06),
+        0 -4px 6px -1px rgba(255, 255, 255, 0.1),
+        0 -2px 4px -1px rgba(255, 255, 255, 0.06),
+        4px 0 6px -1px rgba(255, 255, 255, 0.1),
+        -4px 0 6px -1px rgba(255, 255, 255, 0.1);
+
+    & .chat-history-link {
+        @media (min-width: 800px) {
+            display: none;
+        }
+    }
 }
 </style>
