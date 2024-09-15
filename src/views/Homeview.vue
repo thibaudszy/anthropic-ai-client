@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import Chat from "@/components/Chat.vue";
 import PromptInput from "@/components/PromptInput.vue";
-import { useClaudeChat } from "@/hooks/use-claude-chat";
+import { useAiChat } from "@/hooks/use-ai-chat";
 import { unref } from "vue";
 
-const claudeChat = useClaudeChat();
+const aiChat = useAiChat();
 
 function onPrompt(prompt: string) {
-    claudeChat.sendPrompt(prompt);
+    aiChat.sendPrompt(prompt);
 }
 </script>
 
 <template>
     <Chat
-        :key="claudeChat.activeChat.value.id"
+        :key="aiChat.activeChat.value.id"
         class="chat-container"
-        :chat-data="unref(claudeChat.activeChat)"
-        :error="unref(claudeChat.error)"
-        :is-streaming="unref(claudeChat.isLoading)"
-        @retry="claudeChat.retryStream"
+        :chat-data="unref(aiChat.activeChat)"
+        :error="unref(aiChat.error)"
+        :is-streaming="unref(aiChat.isLoading)"
+        @retry="aiChat.retryStream"
     />
     <PromptInput
         class="prompt-input"
-        :stream-controller="unref(claudeChat.streamController)"
-        :is-streaming="claudeChat.isLoading"
+        :stream-controller="unref(aiChat.streamController)"
+        :is-streaming="aiChat.isLoading"
         @send-prompt="onPrompt"
     />
 </template>

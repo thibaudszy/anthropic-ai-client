@@ -12,7 +12,7 @@ const debouncedSaveToLocalStorage = debounce((key: string, data: string) => {
     localStorage.setItem(key, data);
 }, 500);
 
-export function useClaudeChat() {
+export function useAiChat() {
     const route = useRoute();
     const router = useRouter();
 
@@ -51,7 +51,7 @@ export function useClaudeChat() {
         { immediate: true },
     );
 
-    const apiKey = localStorage.getItem("anthropic_api_key") || undefined;
+    const apiKey = localStorage.getItem("openai_api_key") || undefined;
     const aiClient = new OpenAI({
         apiKey,
         dangerouslyAllowBrowser: true,
@@ -149,13 +149,15 @@ export function useClaudeChat() {
 
     const streamController = ref<AbortController | null>(null);
     const getResponseForActiveChat = async (mdToHtml: MdToHtml) => {
+        // Use cheaper model for testing
+        const model = import.meta.env.DEV ? "gpt-4o-mini-2024-07-18" : "gpt-4o";
         try {
             const stream = await aiClient.chat.completions.create({
                 messages: activeChat.value.chat.map(({ role, content }) => ({
                     role,
                     content,
                 })),
-                model: "gpt-4o",
+                model: model,
                 max_tokens: 1024,
                 stream: true,
             });
