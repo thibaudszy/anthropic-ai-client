@@ -4,7 +4,7 @@ import { ref } from "vue";
 import NewChat from "./components/NewChat.vue";
 
 const showApiKeyRequest = ref(false);
-if (!localStorage.getItem("anthropic_api_key")) {
+if (!localStorage.getItem("openai_api_key")) {
     showApiKeyRequest.value = true;
 }
 
@@ -14,7 +14,7 @@ function handleApiKeySubmit() {
     if (!apiKeyInput.value.trim()) {
         return;
     }
-    localStorage.setItem("anthropic_api_key", apiKeyInput.value);
+    localStorage.setItem("openai_api_key", apiKeyInput.value);
     apiKeyInput.value = "";
     showApiKeyRequest.value = false;
 }
@@ -57,7 +57,7 @@ function handleApiKeySubmit() {
                         class="api-key-form"
                         @submit.prevent="handleApiKeySubmit"
                     >
-                        <label>Input the Anthropic API key here </label>
+                        <label>Input the OpenAi API key here </label>
                         <div>
                             <input v-model="apiKeyInput" type="password" />
                             <button>Submit</button>
