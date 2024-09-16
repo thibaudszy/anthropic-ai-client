@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import { debounce } from "lodash-es";
 import { MdToHtml } from "@/utils/md-to-html";
 import { defaultPreset, hidePreset } from "./preset";
+import { models } from "@/models";
 
 const debouncedSaveToLocalStorage = debounce((key: string, data: string) => {
     localStorage.setItem(key, data);
@@ -71,9 +72,7 @@ export function useAiChat() {
             );
             return;
         }
-        if (historyItem.title !== "New chat") {
-            return;
-        }
+
         const message = await aiClient.chat.completions.create({
             max_tokens: 1024,
             messages: [
@@ -82,7 +81,7 @@ export function useAiChat() {
                     content: `Generate a title for this conversation. The title should provide context on the conversation and allow to easily find it later. The title should be maximum 6 words long. Your reply should only contain the title and nothing else. Conversation: ${JSON.stringify(activeChat.value?.chat)}`,
                 },
             ],
-            model: "gpt-4o-mini-2024-07-18",
+            model: "gpt-4o-mini",
         });
 
         historyItem.title = message.choices[0].message.content || "New Chat";
@@ -150,7 +149,7 @@ export function useAiChat() {
     const streamController = ref<AbortController | null>(null);
     const getResponseForActiveChat = async (mdToHtml: MdToHtml) => {
         // Use cheaper model for testing
-        const model = import.meta.env.DEV ? "gpt-4o-mini-2024-07-18" : "gpt-4o";
+        const model = (route.query.model || models[0]) as string;
         try {
             const stream = await aiClient.chat.completions.create({
                 messages: activeChat.value.chat.map(({ role, content }) => ({

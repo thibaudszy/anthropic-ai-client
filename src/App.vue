@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import SideBar from "@/components/SideBar.vue";
-import { ref, nextTick } from "vue";
+import { computed, ref } from "vue";
 import NewChat from "./components/NewChat.vue";
 import { vOnClickOutside } from "@vueuse/components";
-import { router } from "./router/router";
+import { useRoute, useRouter } from "vue-router";
+import { models } from "./models";
 
 const showApiKeyRequest = ref(false);
 if (!localStorage.getItem("openai_api_key")) {
     showApiKeyRequest.value = true;
 }
+
+const route = useRoute();
+const router = useRouter();
+const model = computed(() => route.query.model || models[0]);
 
 const apiKeyInput = ref<string>("");
 
@@ -31,13 +36,62 @@ function resetApiKey() {
     router.push({ name: "home" });
     location.reload();
 }
+
+const isModelPopupOpen = ref(false);
 </script>
 
 <template>
     <div class="app-content">
         <header class="app-header">
             <NewChat class="mobile-link" />
-            <h1>ChatGPT-4o</h1>
+            <div
+                class="header-select menu-container"
+                v-on-click-outside="() => (isModelPopupOpen = false)"
+            >
+                <button
+                    class="ghost"
+                    @click="isModelPopupOpen = !isModelPopupOpen"
+                >
+                    <h1>{{ model }}</h1>
+
+                    <svg
+                        class="w-6 h-6 text-gray-800 dark:text-white"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="m19 9-7 7-7-7"
+                        />
+                    </svg>
+                </button>
+                <div
+                    v-show="isModelPopupOpen"
+                    class="popup menu"
+                    :class="{ open: isModelPopupOpen }"
+                    @click="isModelPopupOpen = false"
+                >
+                    <RouterLink
+                        v-for="model of models"
+                        :key="model"
+                        class="button ghost"
+                        :to="{
+                            name: 'home',
+                            query: { model },
+                        }"
+                    >
+                        {{ model }}
+                    </RouterLink>
+                </div>
+            </div>
+
             <div
                 class="menu-container"
                 v-on-click-outside="() => (isPopupOpen = false)"
@@ -62,7 +116,7 @@ function resetApiKey() {
                 </button>
                 <div
                     v-show="isPopupOpen"
-                    class="popup"
+                    class="popup menu"
                     :class="{ open: isPopupOpen }"
                     @click="isPopupOpen = false"
                 >
@@ -205,6 +259,15 @@ function resetApiKey() {
         @media (min-width: 800px) {
             display: none;
         }
+    }
+}
+
+.header-select {
+    display: inline-flex;
+    align-items: center;
+
+    & h1 {
+        margin-right: 0.5rem;
     }
 }
 </style>
