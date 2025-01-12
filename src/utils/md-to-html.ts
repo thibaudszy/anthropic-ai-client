@@ -4,24 +4,18 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import { enhanceCodeBlocks } from "./md-code-block-plugin";
+import rehypeStarryNight from 'rehype-starry-night';
 
 export class MdToHtml {
     private queue: PQueue;
     private latestMdString: string | null = null;
-    private rehypeStarryNight: Function | null;
 
     constructor() {
         this.queue = new PQueue({ concurrency: 1 });
-        this.rehypeStarryNight = null;
     }
 
     public async transpile(mdString: string): Promise<string> {
         this.latestMdString = mdString;
-        if (!this.rehypeStarryNight && mdString.includes("```")) {
-            this.rehypeStarryNight = (
-                await import("rehype-starry-night")
-            ).default;
-        }
 
         // Clear the queue of any pending tasks
         this.queue.clear();
@@ -47,8 +41,7 @@ export class MdToHtml {
             .use(remarkParse)
             .use(remarkRehype)
             .use(enhanceCodeBlocks)
-            // @ts-expect-error
-            .use(this.rehypeStarryNight)
+            .use(rehypeStarryNight)
             .use(rehypeStringify)
             .process(mdString);
         const str = String(file);
