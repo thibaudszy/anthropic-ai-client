@@ -12,9 +12,6 @@ type Props = {
 };
 const props = defineProps<Props>();
 
-type Emits = {
-    (e: "retry"): void;
-};
 const bottomOfChat = ref<HTMLElement | null>();
 const autoScroll = ref<boolean>(true);
 
@@ -42,7 +39,6 @@ watch(props.chatData, (newValue, oldValue) => {
     }
 });
 
-const emit = defineEmits<Emits>();
 const lastChatRole = computed(() => {
     return props.chatData.chat?.at(-1)?.role;
 });
