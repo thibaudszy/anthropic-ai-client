@@ -25,8 +25,13 @@ const activeChatId = computed(() => {
     return chatid;
 });
 
+function isMobile() {
+    return /Android|webOS|iPhone|iPad/i.test(navigator.userAgent);
+}
+
 watch(activeChatId, (newValue) => {
-    if (!newValue) {
+    // focus on load messes with page height on mobile. 
+    if (!isMobile() && !newValue) {
         textarea.value.focus();
     }
 });
