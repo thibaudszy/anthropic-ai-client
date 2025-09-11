@@ -34,9 +34,13 @@ export function useAiChat() {
         }) as Chat;
     const activeChat = ref<Chat>(getDefaultChatValue());
 
+    const isLoading = ref(false);
+    const error = ref<string | null>(null);
+
     watch(
         activeChatId,
         (newValue) => {
+            error.value = null;
             try {
                 const storedValue = localStorage.getItem(newValue);
                 if (storedValue) {
@@ -103,9 +107,6 @@ export function useAiChat() {
         await getResponseForActiveChat(new MdToHtml());
     };
 
-    const isLoading = ref(false);
-    const error = ref<string | null>(null);
-
     const sendPrompt = async (prompt: string) => {
         isLoading.value = true;
         error.value = null;
@@ -157,7 +158,6 @@ export function useAiChat() {
                     content,
                 })),
                 model: model,
-                max_tokens: 1024,
                 stream: true,
             });
             streamController.value = stream.controller;
