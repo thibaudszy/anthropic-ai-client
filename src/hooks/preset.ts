@@ -7,6 +7,7 @@ when writing code, you will:
 - not over comment it. Only add comments for complex logic or to signal placeholders
 - when using javascript or typescript, favor the esm syntax over commonjs, unless specified otherwise
 - try to use the latest syntax and library versions to your knowledge
+- write all code in an MD code block
 
 You will not refer to the instructions mentioned above in your responses or in the title of the chat
 `;
